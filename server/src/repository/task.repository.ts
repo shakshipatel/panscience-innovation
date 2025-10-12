@@ -7,6 +7,7 @@ interface ITaskRepository {
   createTask(data: Partial<TaskData>): Promise<Task>;
   updateTask(id: string, updates: Partial<{ title: string; description: string; status: string; priority: string; dueDate: Date; assignedTo: string; attachedDocuments: string[] }>): Promise<Task | null>;
   deleteTask(id: string): Promise<Task | null>;
+  getAllTasks(userId: string): Promise<Task[]>;
 }
 
 class TaskRepository implements ITaskRepository {
@@ -36,12 +37,12 @@ class TaskRepository implements ITaskRepository {
         ]
       }
     }
-    
+
     const task = await this.prisma.task.create({
       data: newData,
       include: { users: true },
     })
-    
+
     return task
   }
 
@@ -62,6 +63,58 @@ class TaskRepository implements ITaskRepository {
       where: { id },
     })
     return task
+  }
+
+  async getAllTasks(): Promise<Task[]> {
+    const tasks = await this.prisma.task.findMany({
+      include: {
+        users: {
+          select: { id: true, name: true, email: true, createdAt: true, updatedAt: true, role: true }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    })
+    return tasks
+  }
+
+  async paginateTasks(data: {
+    offset: number;
+    limit: number;
+    filter: {
+      status: string[];
+      priority: string[];
+      users: string[];
+    };
+    sortBy: string;
+    sortOrder: "asc" | "desc";
+  }): Promise<{ tasks: Task[]; total: number }> {
+    const { offset, limit, filter, sortBy, sortOrder } = data;
+
+    const whereClause: any = {};
+    if (filter.status && filter.status.length > 0) {
+      whereClause.status = { in: filter.status };
+    }
+    if (filter.priority && filter.priority.length > 0) {
+      whereClause.priority = { in: filter.priority };
+    }
+    if (filter.users && filter.users.length > 0) {
+      whereClause.users = { some: { id: { in: filter.users } } };
+    }
+    const [tasks, total] = await Promise.all([
+      this.prisma.task.findMany({
+        where: whereClause,
+        skip: offset,
+        take: limit,
+        orderBy: { [sortBy]: sortOrder },
+        include: {
+          users: {
+            select: { id: true, name: true, email: true, createdAt: true, updatedAt: true, role: true }
+          }
+        }
+      }),
+      this.prisma.task.count({ where: whereClause }),
+    ]);
+    return { tasks, total };
   }
 }
 

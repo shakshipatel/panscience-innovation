@@ -1,0 +1,66 @@
+// imports
+@use "variables";
+@use "reset";
+@use "mixins";
+
+// global
+* {
+  font-family: variables.$font-family-primary;
+  transition: all 0.3s ease;
+
+  @media (max-width: 770px) {
+    line-height: 150% !important;
+  }
+}
+
+body {
+  font-size: variables.$font-size-medium;
+  color: variables.$gray-1000;
+  background-color: variables.$gray-100;
+  max-height: 100dvh;
+}
+
+h1 {
+  color: variables.$gray-1000;
+  flex: 1 0 0;
+  font-size: variables.$font-size-xmedium;
+  font-style: normal;
+  font-weight: 500;
+}
+
+h2 {
+  color: variables.$gray-1000;
+  flex: 1 0 0;
+  font-size: variables.$font-size-medium;
+  font-style: normal;
+  font-weight: 500;
+}
+
+h3 {
+  color: variables.$gray-1000;
+  flex: 1 0 0;
+  font-size: variables.$font-size-small;
+  font-style: normal;
+  font-weight: 500;
+}
+
+img {
+  object-fit: cover;
+  cursor: pointer;
+}
+
+// set textarea and input styles
+textarea,
+input {
+  outline: none;
+  border: none;
+  width: 100%;
+  color: variables.$gray-700;
+  font-size: variables.$font-size-small;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.5rem;
+  align-self: stretch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

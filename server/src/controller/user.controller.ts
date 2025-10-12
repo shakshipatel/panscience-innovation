@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import type UserService from "../service/user.service";
 import { BadRequestResponse, InternalServerErrorResponse, SuccessResponse } from "../utils/responses";
+import logger from "../utils/logger";
 
 class UserController {
   private userService: UserService;
@@ -10,6 +11,8 @@ class UserController {
     
     this.registerUser = this.registerUser.bind(this);
     this.loginUser = this.loginUser.bind(this);
+    this.getMe = this.getMe.bind(this);
+    this.getAllUsers = this.getAllUsers.bind(this);
   }
 
   async registerUser(req: Request, res: Response): Promise<void> {
@@ -21,9 +24,9 @@ class UserController {
 
       const user = await this.userService.registerUser(email, password, name);
 
-      return SuccessResponse.send(res, "User registered successfully", user);
+      return SuccessResponse.send(res, user, "User registered successfully");
     } catch (error: any) {
-      console.error("Error registering user:", error);
+      logger.error("Error registering user:", error);
       return InternalServerErrorResponse.send(res, error.message || "Internal server error");
     }
   }
@@ -37,9 +40,36 @@ class UserController {
 
       const user = await this.userService.loginUser(email, password);
 
-      return SuccessResponse.send(res, "User logged in successfully", user);
+      return SuccessResponse.send(res, user, "User logged in successfully");
     } catch (error: any) {
-      console.error("Error logging in user:", error);
+      logger.error("Error logging in user:", error);
+      return InternalServerErrorResponse.send(res, error.message || "Internal server error");
+    }
+  }
+
+  async getMe(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return BadRequestResponse.send(res, "User ID is required");
+      }
+      const user = await this.userService.getMe(userId);
+      if (!user) {
+        return BadRequestResponse.send(res, "User not found");
+      }
+      return SuccessResponse.send(res, user, "User fetched successfully");
+    } catch (error: any) {
+      logger.error("Error fetching user:", error);
+      return InternalServerErrorResponse.send(res, error.message || "Internal server error");
+    }
+  }
+
+  async getAllUsers(_req: Request, res: Response): Promise<void> {
+    try {
+      const users = await this.userService.getAllUsers();
+      return SuccessResponse.send(res, users, "Users fetched successfully");
+    } catch (error: any) {
+      logger.error("Error fetching users:", error);
       return InternalServerErrorResponse.send(res, error.message || "Internal server error");
     }
   }

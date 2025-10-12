@@ -1,0 +1,71 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+
+  .title {
+    color: var(--Text-colors-primary-new, #162029);
+    font-size: 1.75rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+
+    .add_user {
+      display: flex;
+      height: 2.5rem;
+      padding: 0.5rem 0.75rem;
+      justify-content: center;
+      align-items: center;
+      gap: 0.25rem;
+      border-radius: 125000000rem;
+      background: rgba(255, 98, 4, 0.08);
+
+      p {
+        color: var(--Text-colors-primary-new, #162029);
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+      }
+    }
+
+    .user_info {
+      display: flex;
+      height: 2.5rem;
+      padding: 0.5rem;
+      justify-content: center;
+      align-items: center;
+      gap: 0.25rem;
+      border-radius: 125000000rem;
+      background: #E0FFE9;
+
+      p {
+        color: var(--Text-colors-primary-new, #162029);
+        text-align: center;
+        leading-trim: both;
+        text-edge: cap;
+        font-size: 1.25rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+      }
+
+      .logout {
+        display: flex;
+        padding: 0.5rem;
+        align-items: center;
+        gap: 0.625rem;
+        border-radius: 1250000000rem;
+        background: var(--Bg-colors-opaque, #FFF);
+      }
+    }
+  }
+}

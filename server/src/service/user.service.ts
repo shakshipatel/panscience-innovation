@@ -39,6 +39,8 @@ interface IUserService {
   updateUserProfile(userId: string, name: string, email: string): Promise<UpdateUserResponse>;
   deleteUser(userId: string): Promise<DeleteUserResponse>;
   getUserByEmail(email: string): Promise<User | null>;
+  getMe(userId: string): Promise<User | null>;
+  getAllUsers(): Promise<{ id: string; name: string }[]>;
 }
 
 class UserService implements IUserService {
@@ -48,6 +50,10 @@ class UserService implements IUserService {
   constructor(userRepository: UserRepository, jwtHelper: JwtHelper) {
     this.userRespository = userRepository;
     this.jwtHelper = jwtHelper;
+  }
+
+  async getMe(userId: string): Promise<User | null> {
+    return this.userRespository.getUserById(userId);
   }
 
   async getUserByEmail(email: string): Promise<User | null> {
@@ -155,6 +161,10 @@ class UserService implements IUserService {
     return {
       success: true,
     };
+  }
+
+  async getAllUsers(): Promise<{ id: string; name: string }[]> {
+    return this.userRespository.getAllUsers();
   }
 }
 

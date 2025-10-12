@@ -1,0 +1,193 @@
+.task_row {
+  display: flex;
+  padding: 1.5rem 0.75rem;
+  align-items: flex-start;
+  gap: 1.5rem;
+  align-self: stretch;
+
+  .task_details {
+    display: flex;
+    min-width: 18.5rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.625rem;
+    flex: 1 0 0;
+
+    p {
+      color: var(--Text-colors-primary-new, #162029);
+      font-family: Urbanist;
+      font-size: 0.875rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      flex: 1 0 0;
+    }
+  }
+
+  .task_details_dynamic {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex: 1 0 0;
+
+    .assigned_to {
+      display: flex;
+      align-items: center;
+      align-content: center;
+      gap: 0.5rem;
+      flex: 1 0 0;
+      flex-direction: column;
+
+      .user_tag {
+        display: flex;
+        padding: 0.25rem;
+        justify-content: center;
+        align-items: center;
+        gap: 0.25rem;
+        border-radius: 12500000rem;
+        width: 100%;
+
+        .icon {
+          display: flex;
+          width: 1.25rem;
+          height: 1.25rem;
+          padding: 0.625rem;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          gap: 0.625rem;
+          border-radius: 12500rem;
+          background: #D7797A;
+
+          p {
+            color: var(--Text-colors-primary-new, #162029);
+            text-align: center;
+            leading-trim: both;
+            text-edge: cap;
+            font-family: Urbanist;
+            font-size: 0.75rem;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            flex-shrink: 0;
+            flex: 1 0 0;
+          }
+        }
+
+        .name {
+          overflow: hidden;
+          color: var(--Text-colors-primary-new, #162029);
+          text-overflow: ellipsis;
+          font-family: Urbanist;
+          font-size: 1rem;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 1;
+        }
+
+        .cursor {
+          cursor: pointer;
+        }
+      }
+    }
+
+    p {
+      color: var(--Text-colors-primary-new, #162029);
+      font-family: Urbanist;
+      font-size: 0.875rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      flex: 1 0 0;
+    }
+
+    .active * {
+      fill: var(--Text-colors-primary-new, #162029);
+    }
+
+    .empty * {
+      fill: var(--Bg-colors-grey-accentured, #DFE5F3);
+    }
+
+    .late,
+    .high,
+    .urgent {
+      cursor: pointer;
+      display: flex;
+      padding: 0.25rem 0.75rem;
+      justify-content: center;
+      align-items: center;
+      gap: 0.625rem;
+      border-radius: 12499999744rem;
+      background: rgba(169, 30, 12, 0.08);
+
+      p {
+        color: #A91E0C;
+        font-size: 0.875rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+      }
+    }
+
+    .done {
+      cursor: pointer;
+      display: flex;
+      padding: 0.25rem 0.75rem;
+      justify-content: center;
+      align-items: center;
+      gap: 0.625rem;
+      border-radius: 12499999744rem;
+      background: rgba(109, 207, 73, 0.08);
+
+      p {
+        color: #2C8C09;
+        font-size: 0.875rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+      }
+    }
+
+    .progress,
+    .low {
+      cursor: pointer;
+      display: flex;
+      padding: 0.25rem 0.75rem;
+      justify-content: center;
+      align-items: center;
+      gap: 0.625rem;
+      border-radius: 12499999744rem;
+      background: rgba(9, 174, 235, 0.08);
+
+      p {
+        color: #09AEEB;
+        font-size: 0.875rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+      }
+    }
+
+    .medium {
+      display: flex;
+      padding: 0.25rem 0.75rem;
+      justify-content: center;
+      align-items: center;
+      gap: 0.625rem;
+      border-radius: 12499999744rem;
+      background: rgba(255, 98, 4, 0.08);
+
+      p {
+        color: #FF6204;
+        font-size: 0.875rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+      }
+    }
+  }
+}

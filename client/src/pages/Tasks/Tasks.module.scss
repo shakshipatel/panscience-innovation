@@ -1,0 +1,205 @@
+.page {
+  display: flex;
+  width: 100%;
+  min-height: 100%;
+  padding: 1.5rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  border-radius: 1.5rem;
+  background: var(--Bg-colors-opaque, #FFF);
+
+  .action_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+
+    .left {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .priority {
+        @extend %button;
+        position: relative;
+        background: var(--Bg-colors-grey-regular, #F0F3FA);
+      }
+
+      .status {
+        @extend %button;
+        position: relative;
+        background: rgba(255, 98, 4, 0.08);
+
+        .indicator {
+          z-index: 10;
+          min-width: 0.5rem;
+          min-height: 0.5rem;
+          aspect-ratio: 1/1;
+          background: var(--Orange, #FF6204);
+          position: absolute;
+          right: 0.125rem;
+          top: 0.125rem;
+          border-radius: 100%;
+        }
+      }
+
+      .users {
+        @extend %button;
+        position: relative;
+        background: rgba(9, 174, 235, 0.08);
+        
+        .indicator {
+          z-index: 10;
+          min-width: 0.5rem;
+          min-height: 0.5rem;
+          aspect-ratio: 1/1;
+          position: absolute;
+          right: 0.125rem;
+          top: 0.125rem;
+          border-radius: 100%;
+          background: var(--Blue, #09AEEB);
+        }
+      }
+
+      .filter {
+        @extend %button;
+        padding: 0.5rem 0.75rem !important;
+      }
+    }
+
+    .right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .sort {
+        @extend %button;
+        padding: 0.5rem 0.75rem !important;
+        position: relative;
+
+        background: var(--Bg-colors-grey-light, #F9FBFF);
+      }
+
+      .add_task {
+        @extend %button;
+        background: var(--Orange, #FF6204);
+        padding: 0.5rem 0.75rem !important;
+
+        svg * {
+          stroke: white;
+        }
+
+        p {
+          color: var(--Text-colors-primary-inverted, #FFF) !important;
+        }
+      }
+    }
+  }
+
+  .tasks_section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 0 0;
+    align-self: stretch;
+
+    .task_container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1 0 0;
+      align-self: stretch;
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+
+    .icon {
+      display: flex;
+      width: 1.5rem;
+      height: 1.5rem;
+      padding: 0.625rem;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0.625rem;
+
+      svg {
+        cursor: pointer;
+        flex-shrink: 0;
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+
+      .arrow2 {
+        transform: rotate(-180deg);
+      }
+    }
+
+    .page {
+      display: flex;
+      width: 1.5rem;
+      height: 1.5rem;
+      padding: 0.625rem;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0.625rem;
+      border-radius: 125rem;
+      cursor: pointer;
+
+      p {
+        color: var(--Text-colors-primary-new, #162029);
+        text-align: center;
+        font-family: Inter;
+        font-size: 0.875rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 100%;
+      }
+
+      &.active {
+        background: var(--Orange, #FF6204);
+
+        p {
+          color: var(--Text-colors-primary-inverted, #FFF);
+        }
+      }
+    }
+  }
+}
+
+%button {
+  cursor: pointer;
+  display: flex;
+  height: 2.5rem;
+  padding: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 1250000rem;
+
+  p {
+    color: var(--Text-colors-primary-new, #162029);
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+}
+
+.line {
+  width: 100%;
+  min-height: 0.03125rem;
+  background: var(--Border-colors-regular, #E2E8F0);
+}

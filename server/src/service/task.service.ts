@@ -10,7 +10,7 @@
 
 import type { Task } from "../../generated/prisma";
 import type TaskRepository from "../repository/task.repository";
-import type { TaskData } from "../types";
+import type { PaginatedTaskRequest, PaginatedTaskResponse, TaskData } from "../types";
 
 //   assignedTo        String?
 //   assignedUser      User?          @relation("UserTasks", fields: [assignedTo], references: [id], onDelete: SetNull)
@@ -25,6 +25,8 @@ interface ITaskService {
   getTaskById(id: string, userId: string): Promise<Task | null>;
   updateTask(id: string, updates: Partial<{ title: string; description: string; status: string; priority: string; dueDate: Date; assignedTo: string; attachedDocuments: string[] }>): Promise<Task | null>;
   deleteTask(id: string): Promise<Task | null>;
+  getAllTasks(): Promise<Task[]>;
+  paginateTasks(data: PaginatedTaskRequest): Promise<PaginatedTaskResponse>;
 }
 
 class TaskService implements ITaskService {
@@ -66,6 +68,28 @@ class TaskService implements ITaskService {
     }
     const deletedTask = await this.taskRepository.deleteTask(id);
     return deletedTask;
+  }
+
+  async getAllTasks(): Promise<Task[]> {
+    const tasks = await this.taskRepository.getAllTasks();
+    return tasks;
+  }
+
+  async paginateTasks(data: PaginatedTaskRequest): Promise<PaginatedTaskResponse> {
+    const { page, limit, filter, sortBy, sortOrder } = data;
+    const offset = (page - 1) * limit;
+
+    const _data = {
+      offset,
+      limit,
+      filter,
+      sortBy,
+      sortOrder,
+    }
+
+    const { tasks, total } = await this.taskRepository.paginateTasks(_data);
+
+    return { tasks, total, page, limit };
   }
 }
 

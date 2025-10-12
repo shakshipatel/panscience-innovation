@@ -2,6 +2,8 @@ import express from "express";
 
 import type { Request, Response } from "express";
 
+import fs from "fs";
+import path from "path";
 import chalk from "chalk";
 import helmet from "helmet";
 import multer from "multer";
@@ -12,6 +14,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 
 import {
+  BadRequestResponse,
   InternalServerErrorResponse,
   SuccessResponse,
 } from "./utils/responses";
@@ -20,6 +23,59 @@ import logger from "./utils/logger";
 import v1Router from "./routes";
 
 const app = express();
+
+const uploadDir = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const name = path.basename(file.originalname, ext);
+    cb(null, `${name}${ext}`);
+  },
+});
+
+const fileFilter = (req: any, file: any, cb: any) => {
+  if (file.mimetype === "application/pdf") cb(null, true);
+  else cb(new Error("Only PDF files are allowed!"));
+};
+
+const upload = multer({ storage, fileFilter });
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:4173",
+    ],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  })
+);
+
+app.post("/v1/upload", upload.single("pdf"), (req, res) => {
+  if (!req.file) return BadRequestResponse.send(res, "No file uploaded or invalid file type");
+  return SuccessResponse.send(res, {}, "File uploaded successfully");
+});
+
+app.get("/v1/files", (_req, res) => {
+  fs.readdir(uploadDir, (err, files) => {
+    if (err) {
+      return InternalServerErrorResponse.send(res, err.message || "Internal server error");
+    }
+    return SuccessResponse.send(res, files, "Files fetched successfully");
+  });
+});
+
+app.get("/v1/files/:filename", (req, res) => {
+  const filePath = path.join(uploadDir, req.params.filename);
+  if (fs.existsSync(filePath)) {
+    return res.download(filePath);
+  }
+  return BadRequestResponse.send(res, "File not found");
+});
 
 morgan.token("colored-method", (req, res) => {
   const method = req.method;
@@ -67,16 +123,7 @@ app.use(
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(multer().none());
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "http://localhost:4173",
-    ],
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  })
-);
+// app.use(multer().none());
 
 app.use("/v1", v1Router);
 
