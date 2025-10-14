@@ -5,7 +5,7 @@ import type { AppPrismaClient, TaskData } from "../types"
 interface ITaskRepository {
   getTaskById(id: string): Promise<Task | null>;
   createTask(data: Partial<TaskData>): Promise<Task>;
-  updateTask(id: string, updates: Partial<{ title: string; description: string; status: string; priority: string; dueDate: Date; assignedTo: string; attachedDocuments: string[] }>): Promise<Task | null>;
+  updateTask(id: string, updates: Omit<Task, "id" | "createdAt" | "updatedAt"> & { users: string[] }): Promise<Task | null>;
   deleteTask(id: string): Promise<Task | null>;
   getAllTasks(userId: string): Promise<Task[]>;
 }
@@ -46,10 +46,28 @@ class TaskRepository implements ITaskRepository {
     return task
   }
 
-  async updateTask(id: string, updates: Partial<{ title: string; description: string; status: string; priority: string; dueDate: Date; assignedTo: string; attachedDocuments: string[] }>): Promise<Task | null> {
-    const prismaUpdates: any = { ...updates };
-    if (updates.status !== undefined) {
-      prismaUpdates.status = updates.status as any;
+  // async updateTask(id: string, updates: Partial<{ title: string; description: string; status: string; priority: string; dueDate: Date; assignedTo: string; attachedDocuments: string[]; users: string[] }>): Promise<Task | null> {
+  //   const prismaUpdates = { ...updates };
+  //   if (updates.status !== undefined) {
+  //     prismaUpdates.status = updates.status as any;
+  //   }
+
+
+
+  //   const task = await this.prisma.task.update({
+  //     where: { id },
+  //     data: prismaUpdates,
+  //   })
+  //   return task
+  // }
+  async updateTask(id: string, updates: Omit<Task, "id" | "createdAt" | "updatedAt"> & { users: string[] }): Promise<Task | null> {
+    const { users, ...restUpdates } = updates;
+    const prismaUpdates: any = { ...restUpdates };
+
+    if (users !== undefined) {
+      prismaUpdates.users = {
+        set: users.map(userId => ({ id: userId }))
+      };
     }
     const task = await this.prisma.task.update({
       where: { id },

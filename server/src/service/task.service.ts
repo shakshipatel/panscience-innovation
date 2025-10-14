@@ -23,7 +23,7 @@ import type { PaginatedTaskRequest, PaginatedTaskResponse, TaskData } from "../t
 interface ITaskService {
   createTask(data: Partial<TaskData>): Promise<Task>;
   getTaskById(id: string, userId: string): Promise<Task | null>;
-  updateTask(id: string, updates: Partial<{ title: string; description: string; status: string; priority: string; dueDate: Date; assignedTo: string; attachedDocuments: string[] }>): Promise<Task | null>;
+  updateTask(id: string, updates: Omit<Task, "id" | "createdAt" | "updatedAt"> & { users: string[] }): Promise<Task | null>;
   deleteTask(id: string): Promise<Task | null>;
   getAllTasks(): Promise<Task[]>;
   paginateTasks(data: PaginatedTaskRequest): Promise<PaginatedTaskResponse>;
@@ -52,7 +52,7 @@ class TaskService implements ITaskService {
     return task;
   }
 
-  async updateTask(id: string, updates: Partial<{ title: string; description: string; status: string; priority: string; dueDate: Date; assignedTo: string; attachedDocuments: string[] }>): Promise<Task | null> {
+  async updateTask(id: string, updates: Omit<Task, "id" | "createdAt" | "updatedAt"> & { users: string[] }): Promise<Task | null> {
     const existingTask = await this.taskRepository.getTaskById(id);
     if (!existingTask) {
       throw new Error("Task not found");

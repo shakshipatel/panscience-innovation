@@ -42,6 +42,7 @@ export type Task = {
   users: Omit<User, "password">[];
 }
 
+export type UpdateTaskData = { id: string, updates: Omit<Task, "id" | "createdAt" | "updatedAt" | "users"> & { users: string[] } }
 
 export type PaginatedTaskRequest = {
   page: number;

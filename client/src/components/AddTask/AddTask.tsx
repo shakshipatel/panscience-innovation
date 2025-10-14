@@ -14,6 +14,7 @@ import { useOutsideClickHandler } from "../../hooks"
 import { PriorityModal, SelectAssignee, SelectStatus } from "../Modals"
 import UserTag from "../UserTag/UserTag"
 import { selectAllDocs, setAllDocs } from "../../store/reducers/taskSlice"
+import { selectUser } from "../../store/reducers/userSlice"
 
 type Props = {
   onClose: () => void
@@ -25,6 +26,7 @@ type Props = {
 const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
   const dispatch = useDispatch();
 
+  const APP_USER = useSelector(selectUser)
   const allUsers = useSelector(selectAllUsers)
   const allDocs = useSelector(selectAllDocs)
 
@@ -65,7 +67,7 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
     if (file) {
       const formData = new FormData();
       formData.append("pdf", file);
-      uploadDoc(formData, (res, err) => {
+      uploadDoc(formData, (_res, err) => {
         if (err) {
           errorToast("Failed to upload document. Please try again.")
           return
@@ -77,7 +79,15 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
   };
 
   const handleSubmit = () => {
-    createTask(task, users.map(u => ({ id: u.id })), (res, err) => {
+    if (!APP_USER) {
+      errorToast("User not found. Please login again.")
+      return
+    }
+    if (APP_USER?.role !== "admin" && !users.find(u => u.id === APP_USER?.id)) {
+      errorToast("You are not assigned to this task. You cannot edit it.")
+      return
+    }
+    createTask(task, APP_USER?.role === "admin" ? users.map(u => ({ id: u.id })) : [{ id: APP_USER?.id }], (_res, err) => {
       if (err) {
         errorToast("Failed to create task. Please try again.")
         return
@@ -180,6 +190,10 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
             </div>
             <div className={styles.field} onClick={() => setUserModalOpen(true)}>
               {userModalOpen && <SelectAssignee allUsers={allUsers} onSelect={(id) => {
+                if (APP_USER?.role !== "admin" && id !== APP_USER?.id) {
+                  errorToast("Only admin can assign tasks to other users.")
+                  return
+                }
                 const _user = users.find(u => u.id === id)
                 if (_user) {
                   setUsers(users.filter(u => u.id !== id))
@@ -192,7 +206,9 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
               {
                 users.length > 0 ? (
                   users?.map(user => (
-                    <UserTag id={user.id} name={user.name} key={user.id} onRemove={() => setUsers(users.filter(u => u.id !== user.id))} />
+                    <UserTag id={user.id} name={user.name} key={user.id} onRemove={() => setUsers(prev => {
+                      return prev.filter(u => u.id !== user.id)
+                    })} />
                   ))
                 ) : (
                   <div onClick={() => setUserModalOpen(true)} className={styles.wrapper}>
@@ -286,6 +302,10 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
             allDocs?.map((doc: string, idx: number) => (
               <div key={idx} className={styles.doc} onClick={() => {
                 if (!task.attachedDocuments.includes(doc)) {
+                  if (task.attachedDocuments.length >= 3) {
+                    errorToast("You can attach up to 5 documents only.")
+                    return
+                  }
                   handleAddDoc(doc)
                 }
               }}>

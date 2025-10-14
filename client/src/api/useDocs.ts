@@ -1,6 +1,4 @@
-import axios from "axios";
 import { axios_instance } from "../lib/axios";
-import { axios_instanceFormData } from "../lib/axios/axios";
 import { useApiAction } from "./useApiAction";
 
 const useDocs = () => {

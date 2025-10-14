@@ -1,7 +1,7 @@
 
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import styles from "./Navbar.module.scss"
-import { selectUser } from "../../store/reducers/userSlice"
+import { logoutUser, selectUser } from "../../store/reducers/userSlice"
 import { AddUser, Logout } from "../../icons"
 
 type NavbarProps = {
@@ -32,7 +32,10 @@ export const ArrowIcon: React.FC<IconProps> = (props) => (
 );
 
 const Navbar = ({ title }: NavbarProps) => {
+  const dispatch = useDispatch()
+
   const user = useSelector(selectUser)
+  
   return (
     <div className={styles.navbar}>
       <h1 className={styles.title}>{title}</h1>
@@ -43,7 +46,7 @@ const Navbar = ({ title }: NavbarProps) => {
         </div>}
         <div className={styles.user_info}>
           <p>{user?.name?.split(" ")?.map((word) => word[0])?.join("")}</p>
-          <div className={styles.logout}>
+          <div className={styles.logout} onClick={() => dispatch(logoutUser(null))}>
             <Logout />
           </div>
         </div>

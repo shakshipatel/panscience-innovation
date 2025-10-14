@@ -2,7 +2,7 @@ import { axios_instance } from "../lib/axios";
 
 import { useApiAction } from "./useApiAction";
 
-import { type CreateTask, type PaginatedTaskRequest } from "../types";
+import { type CreateTask, type PaginatedTaskRequest, type UpdateTaskData } from "../types";
 
 const useTask = () => {
   const { loading: taskLoading, runApi } = useApiAction();
@@ -28,11 +28,19 @@ const useTask = () => {
       callback,
     );
 
+  const updateTask = (data: UpdateTaskData, callback: (...args: any) => void) =>
+    runApi(
+      () => axios_instance.put("/task/", data),
+      "Failed to update task. Please try again.",
+      callback,
+    );
+
   return {
     taskLoading,
     getTasks,
     createTask,
     getPaginatedTasks,
+    updateTask,
   };
 }
 

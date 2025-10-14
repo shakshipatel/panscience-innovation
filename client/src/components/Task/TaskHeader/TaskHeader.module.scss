@@ -8,12 +8,21 @@
   border-radius: 0.75rem;
   background: var(--Bg-colors-grey-light, #F9FBFF);
 
+  @media (max-width: 770px) {
+    justify-content: unset;
+    min-width: 1352px;
+  }
+
   .task_details {
     display: flex;
     min-width: 18.5rem;
     align-items: center;
     gap: 0.5rem;
     flex: 1 0 0;
+
+    @media (max-width: 770px) {
+      min-width: 12.5rem;
+    }
 
     p {
       color: var(--Text-colors-primary-new, #162029);
@@ -30,6 +39,10 @@
     align-items: center;
     gap: 0.5rem;
     flex: 1 0 0;
+
+    @media (max-width: 770px) {
+      min-width: 10.5rem;
+    }
 
     p {
       color: var(--Text-colors-primary-new, #162029);

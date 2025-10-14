@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { Tick } from "../../../icons"
 import styles from "./SelectAssignee.module.scss"
+import { useSelector } from "react-redux"
+import { selectUser } from "../../../store/reducers/userSlice"
 
 type Props = {
   allUsers: { id: string, name: string }[],
@@ -10,6 +12,7 @@ type Props = {
 }
 
 const SelectAssignee = ({ allUsers, ref, onSelect, selectedUsers }: Props) => {
+  const APP_USER = useSelector(selectUser)
   const [searchFilter, setSearchFilter] = useState<string>("")
   return (
     <div ref={ref} className={styles.select_assignee}>
@@ -19,7 +22,7 @@ const SelectAssignee = ({ allUsers, ref, onSelect, selectedUsers }: Props) => {
       {
         allUsers?.filter(user => user.name.toLowerCase().includes(searchFilter.toLowerCase()))?.map(user => (
           <div key={user.id} className={`${styles.user} ${selectedUsers.find(u => u.id === user.id) ? styles.selected : ""}`} onClick={() => onSelect(user.id)}>
-            <p>{user.name}</p>
+            <p>{user.name}{APP_USER?.id === user.id ? " (Me)" : ""}</p>
             {selectedUsers.find(u => u.id === user.id) ? (<Tick />) : null}
           </div>
         ))

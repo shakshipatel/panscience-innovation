@@ -1,5 +1,5 @@
 
-import { Fragment, use, useEffect, useState } from "react"
+import { Fragment, useEffect, useState } from "react"
 import { Navbar } from "../../components"
 import AddTask from "../../components/AddTask/AddTask"
 import { Add, ArrowLeft, DropdownArrow, Flame, Sort, Target, User } from "../../icons"
@@ -124,6 +124,7 @@ const Tasks = () => {
             <Flame />
             <p>{paginationTasks.filter.priority.join(", ") || "Priority"}</p>
             <DropdownArrow />
+            {paginationTasks.filter.priority?.length > 0 && <div className={styles.indicator} />}
             {priorityFilterOpen && <PriorityFilter ref={priorityFilterRef} selected={paginationTasks.filter.priority as TaskPriority[]} onClick={(priority) => {
               if (paginationTasks.filter.priority.includes(priority)) {
                 dispatch(setPaginationTasks({
@@ -202,10 +203,10 @@ const Tasks = () => {
             }} />
             }
           </div>
-          <div className={styles.filter}>
+          {/* <div className={styles.filter}>
             <Add />
             <p>Filter</p>
-          </div>
+          </div> */}
         </div>
         <div className={styles.right}>
           <div className={styles.sort} onClick={() => setSortModalOpen(!sortModalOpen)} ref={sortRef}>

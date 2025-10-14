@@ -15,15 +15,36 @@
     align-items: center;
     align-self: stretch;
 
+    @media (max-width: 770px) {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
     .left {
       display: flex;
       align-items: center;
       gap: 0.75rem;
 
+      @media (max-width: 770px) {
+        flex-wrap: wrap;
+      }
+
       .priority {
         @extend %button;
         position: relative;
         background: var(--Bg-colors-grey-regular, #F0F3FA);
+
+        .indicator {
+          z-index: 10;
+          min-width: 0.5rem;
+          min-height: 0.5rem;
+          aspect-ratio: 1/1;
+          position: absolute;
+          right: 0.125rem;
+          top: 0.125rem;
+          border-radius: 100%;
+          background: var(--Purple, #7C3AED);
+        }
       }
 
       .status {
@@ -48,7 +69,7 @@
         @extend %button;
         position: relative;
         background: rgba(9, 174, 235, 0.08);
-        
+
         .indicator {
           z-index: 10;
           min-width: 0.5rem;
@@ -72,6 +93,10 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
+
+      @media (max-width: 770px) {
+        width: 100%;
+      }
 
       .sort {
         @extend %button;
@@ -103,6 +128,11 @@
     align-items: center;
     flex: 1 0 0;
     align-self: stretch;
+    overflow-x: auto;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     .task_container {
       display: flex;
@@ -110,10 +140,10 @@
       align-items: center;
       flex: 1 0 0;
       align-self: stretch;
-      overflow-y: auto;
+      // overflow-y: auto;
 
-      &::-webkit-scrollbar {
-        display: none;
+      @media (max-width: 770px) {
+        min-width: 1352px;
       }
     }
   }
@@ -188,6 +218,7 @@
   align-items: center;
   gap: 0.25rem;
   border-radius: 1250000rem;
+  flex-shrink: 0;
 
   p {
     color: var(--Text-colors-primary-new, #162029);
@@ -202,4 +233,8 @@
   width: 100%;
   min-height: 0.03125rem;
   background: var(--Border-colors-regular, #E2E8F0);
+
+  @media (max-width: 770px) {
+    min-width: 1352px;
+  }
 }

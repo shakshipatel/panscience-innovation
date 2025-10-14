@@ -5,7 +5,7 @@ import {
   Calendar, Cross, Cross2, Doc, Flame, Target, Upload, User
 } from "../../icons"
 import styles from "./EditTask.module.scss"
-import { type CreateTask, type Task, type TaskPriority, type TaskStatus } from "../../types"
+import { type Task, type TaskPriority, type TaskStatus, type User as TaskUser } from "../../types"
 import { useDispatch, useSelector } from "react-redux"
 import { selectAllUsers, setAllUsers } from "../../store/reducers/accountSlice"
 import { useDocs, useTask, useUser } from "../../api"
@@ -14,6 +14,7 @@ import { useOutsideClickHandler } from "../../hooks"
 import { PriorityModal, SelectAssignee, SelectStatus } from "../Modals"
 import UserTag from "../UserTag/UserTag"
 import { selectAllDocs, selectSelectedTask, setAllDocs } from "../../store/reducers/taskSlice"
+import { selectUser } from "../../store/reducers/userSlice"
 
 type Props = {
   onClose: () => void
@@ -26,15 +27,15 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
   const dispatch = useDispatch();
 
   const allUsers = useSelector(selectAllUsers)
+  const APP_USER = useSelector(selectUser)
   const allDocs = useSelector(selectAllDocs)
   const selectedTask = useSelector(selectSelectedTask)
 
   const { getAllUsers } = useUser()
-  const { createTask } = useTask()
+  const { updateTask } = useTask()
   const { getDocs, uploadDoc } = useDocs()
 
   const [task, setTask] = useState<Task | null>(selectedTask)
-  const [users, setUsers] = useState<{ id: string, name: string }[]>([])
   const [userModalOpen, setUserModalOpen] = useState(false)
   const [statusModalOpen, setStatusModalOpen] = useState(false)
   const [priorityModalOpen, setPriorityModalOpen] = useState(false)
@@ -59,7 +60,7 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
     if (file) {
       const formData = new FormData();
       formData.append("pdf", file);
-      uploadDoc(formData, (res, err) => {
+      uploadDoc(formData, (_res, err) => {
         if (err) {
           errorToast("Failed to upload document. Please try again.")
           return
@@ -72,21 +73,25 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
 
   const handleSubmit = () => {
     if (!task) return
-    createTask(task, users.map(u => ({ id: u.id })), (res, err) => {
+    if (APP_USER?.role !== "admin" && !task.users.find(u => u.id === APP_USER?.id)) {
+      errorToast("You are not assigned to this task. You cannot edit it.")
+      return
+    }
+    const _task: Omit<Task, "id" | "createdAt" | "updatedAt" | "users"> & { users: string[] } = {
+      title: task.title,
+      description: task.description,
+      priority: task.priority,
+      status: task.status,
+      dueDate: task.dueDate,
+      attachedDocuments: task.attachedDocuments,
+      users: task.users.map(u => u.id)
+    }
+    updateTask({ id: task.id, updates: _task }, (_res, err) => {
       if (err) {
-        errorToast("Failed to create task. Please try again.")
+        errorToast("Failed to update task. Please try again.")
         return
       }
-      successToast("Task created successfully.")
-      // setTask({
-      //   title: "",
-      //   description: "",
-      //   priority: "low",
-      //   status: "progress",
-      //   dueDate: new Date(),
-      //   attachedDocuments: [],
-      // })
-      setUsers([])
+      successToast("Task updated successfully.")
       onEdit()
     })
   }
@@ -141,7 +146,6 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
   useEffect(() => {
     if (!visible) {
       _getDocs()
-      setUsers([])
     }
   }, [visible])
 
@@ -186,19 +190,45 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
               </div>
               <div className={styles.field} onClick={() => setUserModalOpen(true)}>
                 {userModalOpen && <SelectAssignee allUsers={allUsers} onSelect={(id) => {
-                  const _user = users.find(u => u.id === id)
+                  if (APP_USER?.role !== "admin" && id !== APP_USER?.id) {
+                    errorToast("Only admin can assign tasks to other users.")
+                    return
+                  }
+                  const _user = task.users.find(u => u.id === id)
                   if (_user) {
-                    setUsers(users.filter(u => u.id !== id))
+                    setTask(prev => {
+                      if (!prev) return null;
+                      return {
+                        ...prev,
+                        users: prev.users.filter(u => u.id !== id)
+                      };
+                    })
                     return
                   }
                   const user = allUsers.find(u => u.id === id)
                   if (!user) return
-                  setUsers([...users, user])
-                }} ref={userModalRef} selectedUsers={users} />}
+                  setTask(prev => {
+                    if (!prev) return null;
+                    return {
+                      ...prev,
+                      users: [...prev.users, user as Omit<TaskUser, "password">]
+                    };
+                  })
+                }} ref={userModalRef} selectedUsers={task.users} />}
                 {
-                  users.length > 0 ? (
-                    users?.map(user => (
-                      <UserTag id={user.id} name={user.name} key={user.id} onRemove={() => setUsers(users.filter(u => u.id !== user.id))} />
+                  task.users.length > 0 ? (
+                    task.users?.map(user => (
+                      <UserTag id={user.id} name={user.name} key={user.id} onRemove={() => setTask(prev => {
+                        if (!prev) return null;
+                        if (APP_USER?.role !== "admin" && user.id !== APP_USER?.id) {
+                          errorToast("Only admin can remove other users from the task.")
+                          return prev
+                        }
+                        return {
+                          ...prev,
+                          users: prev.users.filter(u => u.id !== user.id)
+                        };
+                      })} />
                     ))
                   ) : (
                     <div onClick={() => setUserModalOpen(true)} className={styles.wrapper}>
@@ -298,6 +328,10 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
               allDocs?.map((doc: string, idx: number) => (
                 <div key={idx} className={styles.doc} onClick={() => {
                   if (!task.attachedDocuments.includes(doc)) {
+                    if (task.attachedDocuments.length >= 3) {
+                      errorToast("You can attach up to 5 documents only.")
+                      return
+                    }
                     handleAddDoc(doc)
                   }
                 }}>

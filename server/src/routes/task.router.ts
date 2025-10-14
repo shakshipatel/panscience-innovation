@@ -27,5 +27,6 @@ taskRouter.post("/", authMiddleware.authenticate, taskController.createTask);
 taskRouter.get("/:id", authMiddleware.authenticate, taskController.getTaskById);
 taskRouter.get("/", authMiddleware.authenticate, taskController.getAllTasks);
 taskRouter.post("/page", authMiddleware.authenticate, taskController.paginateTasks);
+taskRouter.put("/", authMiddleware.authenticate, taskController.updateTask);
 
 export default taskRouter;

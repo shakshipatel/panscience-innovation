@@ -1,5 +1,7 @@
+import { useSelector } from "react-redux";
 import { Cross } from "../../icons";
 import styles from "./UserTag.module.scss";
+import { selectUser } from "../../store/reducers/userSlice";
 
 type Props = {
   id: string,
@@ -26,12 +28,14 @@ export function stringToHexCompact(str: string) {
 
 
 const UserTag = ({ id, name, onRemove }: Props) => {
+  const APP_USER = useSelector(selectUser)
+
   return (
     <div className={styles.user_tag} onClick={e => e.stopPropagation()}>
       <div className={styles.icon} style={{background: stringToHexCompact(id)}} >
         <p>{name?.split(" ")?.map((word) => word[0])?.join("")?.slice(0, 2)}</p>
       </div>
-      <p className={styles.name}>{name}</p>
+      <p className={styles.name}>{name}{APP_USER?.id === id ? " (Me)" : ""}</p>
       <Cross className={styles.cursor} size={16} onClick={onRemove} />
     </div>
   )

@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import type TaskService from "../service/task.service";
-import type { PaginatedTaskRequest, TaskData } from "../types";
+import type { PaginatedTaskRequest, TaskData, UpdateTaskData } from "../types";
 import { BadRequestResponse, InternalServerErrorResponse, SuccessResponse } from "../utils/responses";
 import logger from "../utils/logger";
 
@@ -14,6 +14,7 @@ class TaskController {
     this.getTaskById = this.getTaskById.bind(this);
     this.getAllTasks = this.getAllTasks.bind(this);
     this.paginateTasks = this.paginateTasks.bind(this);
+    this.updateTask = this.updateTask.bind(this);
   }
 
   async createTask(req: Request, res: Response): Promise<void> {
@@ -77,6 +78,22 @@ class TaskController {
       return SuccessResponse.send(res, tasks, "Tasks retrieved successfully");
     } catch (error: any) {
       logger.error("Error paginating tasks:", error);
+      return InternalServerErrorResponse.send(res, error?.message || "Internal server error");
+    }
+  }
+
+  async updateTask(req: Request, res: Response): Promise<void> {
+    try {
+      const { id, updates }: UpdateTaskData = req.body;
+
+      if (!id) {
+        return BadRequestResponse.send(res, "Task ID is required");
+      }
+
+      const updatedTask = await this.taskService.updateTask(id, updates);
+      return SuccessResponse.send(res, updatedTask, "Task updated successfully");
+    } catch (error: any) {
+      logger.error("Error updating task:", error);
       return InternalServerErrorResponse.send(res, error?.message || "Internal server error");
     }
   }

@@ -5,6 +5,8 @@ export type AppPrismaClient = PrismaClient
 
 export type TaskData = Omit<Task, "id" | "createdAt" | "updatedAt">;
 
+export type UpdateTaskData = {id: string, updates: Omit<Task, "id" | "createdAt" | "updatedAt"> & { users: string[] }}
+
 export type PaginatedTaskRequest = {
   page: number;
   limit: number;
