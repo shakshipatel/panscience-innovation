@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./thumbnail.png" alt="Task Management Application Banner" width="100%" />
+</p>
+
 # Task Management Application
 
 A full-stack task management application built with React, TypeScript, and Bun. This application provides a modern interface for managing tasks with user authentication, role-based access control, and file attachment capabilities.
