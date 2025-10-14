@@ -98,6 +98,7 @@ bun run dev
 ```
 
 The server will run on `http://localhost:3000`
+If testing on postman, use this as base url `http://localhost:3000/v1`
 
 ### 3. Setup Frontend (Client)
 
