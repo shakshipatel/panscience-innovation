@@ -50,7 +50,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:4173",
-      "https://scaling-octo-robot-theta.vercel.app"
+      "https://panscience-innovation.vercel.app"
     ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   })
