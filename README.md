@@ -73,7 +73,7 @@ panscience-innovation/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/anuragdaksh7/panscience-innovation.git
+git clone https://github.com/shakshipatel/panscience-innovation.git
 cd panscience-innovation
 ```
 
