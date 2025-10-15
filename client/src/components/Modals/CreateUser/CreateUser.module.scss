@@ -1,7 +1,5 @@
 .create_user {
   display: flex;
-  width: 11.3125rem;
-  max-height: 15rem;
   overflow-y: auto;
   padding: 0.5rem;
   flex-direction: column;
@@ -12,20 +10,105 @@
   background: var(--Bg-colors-opaque, #fff);
   box-shadow: 1px 4px 12px 4px rgba(0, 0, 0, 0.04);
   position: absolute;
-  top: 1.25rem;
+  top: 4rem;
   z-index: 11;
+  right: 12rem;
+  display: flex;
+  padding: 0.75rem;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 
-  .search {
+  .form_data {
     display: flex;
-    padding: 0.25rem;
-    align-items: center;
-    align-content: center;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1rem;
+    align-self: stretch;
+
+    .form_row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      align-self: stretch;
+
+      .label {
+        display: flex;
+        min-width: 4.9rem;
+        padding: 0.25rem 0;
+        align-items: center;
+        gap: 0.5rem;
+
+        svg * {
+          fill: var(--Text-colors-secondary-new, #162029);
+        }
+
+        p {
+          color: var(--Text-colors-secondary-new, #162029);
+          font-size: 1rem;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+          flex: 1 0 0;
+        }
+      }
+
+      .field {
+        display: flex;
+        padding: 0.25rem;
+        align-items: center;
+        gap: 1rem;
+        flex: 1 0 0;
+        position: relative;
+
+        input {
+          color: var(--Text-colors-secondary-new, #646e7d);
+          font-size: 1rem;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+
+          &::placeholder {
+            color: var(--Text-colors-secondary-new, #646e7d);
+            opacity: 1;
+          }
+        }
+
+        .admin {
+          div {
+            background: rgba(169, 30, 12, 0.08);
+
+            p {
+              color: #a91e0c;
+            }
+          }
+        }
+
+        .user {
+          div {
+            background: rgba(9, 174, 235, 0.08);
+
+            p {
+              color: #09aeeb;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .errors {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 0.25rem;
     align-self: stretch;
-    flex-wrap: wrap;
+    margin-top: 0.5rem;
 
-    input {
-      color: var(--Text-colors-secondary-new, #646e7d);
+    p {
+      color: var(--Red, #ff3b30);
       font-size: 0.875rem;
       font-style: normal;
       font-weight: 400;
@@ -33,27 +116,56 @@
     }
   }
 
-  .user {
+  .buttons {
     display: flex;
-    padding: 0.5rem;
     justify-content: center;
     align-items: center;
-    gap: 0.25rem;
-    border-radius: 0.5rem;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 0.5rem;
     align-self: stretch;
-    cursor: pointer;
+    margin-bottom: 0.5rem;
 
-    &.selected {
-      background: var(--Bg-colors-grey-light, #f9fbff);
+    .cancel {
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      max-height: 2.5rem;
+      padding: 0.5rem 0.75rem;
+      justify-content: center;
+      align-items: center;
+      gap: 0.25rem;
+      border-radius: 125000000rem;
+      background: var(--Border-colors-light, #f2f6fc);
+
+      p {
+        color: var(--Text-colors-secondary-new, #646e7d);
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+      }
     }
 
-    p {
-      color: var(--Text-colors-primary-new, #162029);
-      flex: 1 0 0;
-      font-size: 1rem;
-      font-style: normal;
-      font-weight: 400;
-      line-height: normal;
+    .save {
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      max-height: 2.5rem;
+      padding: 0.5rem 0.75rem;
+      justify-content: center;
+      align-items: center;
+      gap: 0.25rem;
+      border-radius: 125000000rem;
+      background: var(--Orange, #ff6204);
+
+      p {
+        color: var(--Text-colors-primary-inverted, #fff);
+        font-size: 1rem;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+      }
     }
   }
 }

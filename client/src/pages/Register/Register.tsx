@@ -28,7 +28,7 @@ const Register = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleLogin = () => {
+  const handleRegister = () => {
     if (!validate()) return;
 
     register(
@@ -77,7 +77,7 @@ const Register = () => {
             className={styles.password}
           />
         </div>
-        <div onClick={handleLogin} className={styles.button}>
+        <div onClick={handleRegister} className={styles.button}>
           <p>{userLoading ? "Registering..." : "Register"}</p>
         </div>
         <p className={styles.alter}>

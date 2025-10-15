@@ -63,4 +63,9 @@ input {
   align-self: stretch;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  // active
+  &:focus {
+    color: #162029;
+  }
 }

@@ -13,7 +13,7 @@ const useUser = () => {
     );
 
   const register = (
-    data: { email: string; name: string; password: string },
+    data: { email: string; name: string; password: string; role?: string },
     callback: (...args: any) => void
   ) =>
     runApi(

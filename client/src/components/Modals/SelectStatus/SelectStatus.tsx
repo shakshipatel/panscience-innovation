@@ -1,12 +1,13 @@
-import { Tick } from "../../../icons"
-import type { TaskStatus } from "../../../types"
-import styles from "./SelectStatus.module.scss"
+import { Tick } from "../../../icons";
+
+import type { TaskStatus } from "../../../types";
+import styles from "./SelectStatus.module.scss";
 
 type Props = {
-  ref: React.RefObject<null>,
-  onSelect: (status: TaskStatus) => void,
-  selectedState: string,
-}
+  ref: React.RefObject<null>;
+  onSelect: (status: TaskStatus) => void;
+  selectedState: string;
+};
 
 const SelectStatus = ({ ref, onSelect, selectedState }: Props) => {
   return (
@@ -30,7 +31,7 @@ const SelectStatus = ({ ref, onSelect, selectedState }: Props) => {
         {selectedState === "progress" && <Tick />}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SelectStatus
+export default SelectStatus;
