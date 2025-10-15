@@ -1,4 +1,4 @@
-import styles from "./Register.module.scss"
+import styles from "./Register.module.scss";
 import { useUser } from "../../api";
 import { useState } from "react";
 import { successToast } from "../../lib/toast";
@@ -9,7 +9,9 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
+    {}
+  );
 
   const validate = () => {
     const newErrors: typeof errors = {};
@@ -29,35 +31,64 @@ const Register = () => {
   const handleLogin = () => {
     if (!validate()) return;
 
-    register({ email, password, name }, (_res, err) => {
-      if (err) {
-        console.error(err);
-        setErrors({ password: "Invalid email or password." });
-      } else {
-        successToast("Registered successfully!");
-        window.location.href = "/login";
+    register(
+      {
+        email: email.trim().toLocaleLowerCase(),
+        password: password.trim(),
+        name: name.trim(),
+      },
+
+      (_res, err) => {
+        if (err) {
+          console.error(err);
+          setErrors({ password: "Invalid email or password." });
+        } else {
+          successToast("Registered successfully!");
+          window.location.href = "/login";
+        }
       }
-    });
+    );
   };
   return (
     <div className={styles.login_page}>
       <img src="/login-page.png" className={styles.img} alt="Logo" />
       <div className={styles.form}>
-        <h1>
-          Welcome to Panscience Innovation
-        </h1>
+        <h1>Welcome to Panscience Innovation</h1>
         <div className={styles.inputs}>
-          <input value={name} onChange={(e) => setName(e.target.value)} type="text" placeholder="Enter your name..." className={styles.name} />
-          <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" placeholder="Enter your email..." className={styles.email} />
-          <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter your password..." className={styles.password} />
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            type="text"
+            placeholder="Enter your name..."
+            className={styles.name}
+          />
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Enter your email..."
+            className={styles.email}
+          />
+          <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            placeholder="Enter your password..."
+            className={styles.password}
+          />
         </div>
         <div onClick={handleLogin} className={styles.button}>
           <p>Register</p>
         </div>
-        <p className={styles.alter}>Already have an account? <span onClick={() => window.location.href = "/login"}>Login here...</span></p>
+        <p className={styles.alter}>
+          Already have an account?{" "}
+          <span onClick={() => (window.location.href = "/login")}>
+            Login here...
+          </span>
+        </p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

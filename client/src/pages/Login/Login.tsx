@@ -35,7 +35,7 @@ const Login = () => {
   const handleLogin = () => {
     if (!validate()) return;
 
-    login({ email, password }, (res, err) => {
+    login({ email: email.trim().toLocaleLowerCase(), password }, (res, err) => {
       if (err) {
         console.error(err);
         setErrors({ password: "Invalid email or password." });
