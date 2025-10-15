@@ -42,34 +42,23 @@ const Login = () => {
   };
 
   return (
-    <div className={styles.page}>
+    <div className={styles.login_page}>
+      <img src="/login-page.png" className={styles.img} alt="Logo" />
       <div className={styles.form}>
-        <p>Login Page</p>
-
-        <div className={styles.inputGroup}>
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            placeholder="Email"
-          />
-          {errors.email && <span className={styles.error}>{errors.email}</span>}
+        <h1>
+          Login to continue
+        </h1>
+        <div className={styles.inputs}>
+          <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" placeholder="Enter your email..." className={styles.email} />
+          <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter your password..." className={styles.email} />
         </div>
-
-        <div className={styles.inputGroup}>
-          <input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            placeholder="Password"
-          />
-          {errors.password && <span className={styles.error}>{errors.password}</span>}
+        <div onClick={handleLogin} className={styles.button}>
+          <p>Login</p>
         </div>
-
-        <button onClick={handleLogin}>Login</button>
+        <p className={styles.alter}>Dont have account? <span onClick={() => window.location.href="/register"}>Signup here...</span></p>
       </div>
     </div>
-  );
+  )
 };
 
 export default Login;
