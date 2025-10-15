@@ -75,13 +75,17 @@ const Tasks = () => {
     setUserFilterOpen(false);
   });
 
+  // Fetch paginated tasks
   const _getPaginationTasks = () => {
     getPaginatedTasks(
       {
         filter: {
           priority: paginationTasks.filter.priority,
           status: paginationTasks.filter.status,
-          users: [...paginationTasks.filter.users, APP_USER?.id || ""],
+          users:
+            APP_USER?.role === "admin"
+              ? paginationTasks.filter.users
+              : [APP_USER?.id || ""],
         },
         page: paginationTasks.currentPage,
         limit: LIMIT,
@@ -110,7 +114,9 @@ const Tasks = () => {
     );
   };
 
+  // Fetch all users (only if admin)
   const _getAllUsers = () => {
+    if (APP_USER?.role !== "admin") return;
     getAllUsers((res, err) => {
       if (err) {
         errorToast("Failed to fetch users. Please try again.");
@@ -119,6 +125,18 @@ const Tasks = () => {
       dispatch(setAllUsers(res?.data || []));
     });
   };
+
+  // Reset filters for non-admins to only show their tasks
+  useEffect(() => {
+    if (APP_USER?.role !== "admin") {
+      dispatch(
+        setPaginationTasks({
+          ...paginationTasks,
+          filter: { ...paginationTasks.filter, users: [APP_USER?.id || ""] },
+        })
+      );
+    }
+  }, [APP_USER]);
 
   useEffect(() => {
     _getAllUsers();
@@ -129,6 +147,7 @@ const Tasks = () => {
     paginationTasks.sortOrder,
     paginationTasks.filter,
   ]);
+
   return (
     <div className={styles.page}>
       <AddTask
@@ -150,6 +169,7 @@ const Tasks = () => {
       <Navbar title="My Tasks" />
       <div className={styles.action_container}>
         <div className={styles.left}>
+          {/* Priority Filter */}
           <div
             className={styles.priority}
             onClick={() => setPriorityFilterOpen(!priorityFilterOpen)}
@@ -196,6 +216,8 @@ const Tasks = () => {
               />
             )}
           </div>
+
+          {/* Status Filter */}
           <div
             className={styles.status}
             onClick={() => setStatusFilterOpen(!statusFilterOpen)}
@@ -239,51 +261,57 @@ const Tasks = () => {
               />
             )}
           </div>
-          <div
-            className={styles.users}
-            onClick={() => setUserFilterOpen((prev) => !prev)}
-            ref={userFilterRef}
-          >
-            <User fill="#162029" />
-            <p>Users ({paginationTasks.filter.users.length})</p>
-            <DropdownArrow />
-            {paginationTasks.filter.users?.length > 0 && (
-              <div className={styles.indicator} />
-            )}
-            {userFilterOpen && (
-              <UserFilter
-                allUsers={allUsers}
-                ref={userFilterRef}
-                selectedUsers={paginationTasks.filter.users}
-                onSelect={(userId) => {
-                  if (paginationTasks.filter.users.includes(userId)) {
+
+          {/* User Filter - Only visible to admin */}
+          {APP_USER?.role === "admin" && (
+            <div
+              className={styles.users}
+              onClick={() => setUserFilterOpen((prev) => !prev)}
+              ref={userFilterRef}
+            >
+              <User fill="#162029" />
+              <p>Users ({paginationTasks.filter.users.length})</p>
+              <DropdownArrow />
+              {paginationTasks.filter.users?.length > 0 && (
+                <div className={styles.indicator} />
+              )}
+              {userFilterOpen && (
+                <UserFilter
+                  allUsers={allUsers}
+                  ref={userFilterRef}
+                  selectedUsers={paginationTasks.filter.users}
+                  onSelect={(userId) => {
+                    if (paginationTasks.filter.users.includes(userId)) {
+                      dispatch(
+                        setPaginationTasks({
+                          ...paginationTasks,
+                          filter: {
+                            ...paginationTasks.filter,
+                            users: paginationTasks.filter.users.filter(
+                              (u) => u !== userId
+                            ),
+                          },
+                        })
+                      );
+                      return;
+                    }
                     dispatch(
                       setPaginationTasks({
                         ...paginationTasks,
                         filter: {
                           ...paginationTasks.filter,
-                          users: paginationTasks.filter.users.filter(
-                            (u) => u !== userId
-                          ),
+                          users: [...paginationTasks.filter.users, userId],
                         },
                       })
                     );
-                    return;
-                  }
-                  dispatch(
-                    setPaginationTasks({
-                      ...paginationTasks,
-                      filter: {
-                        ...paginationTasks.filter,
-                        users: [...paginationTasks.filter.users, userId],
-                      },
-                    })
-                  );
-                }}
-              />
-            )}
-          </div>
+                  }}
+                />
+              )}
+            </div>
+          )}
         </div>
+
+        {/* Right side actions */}
         <div className={styles.right}>
           <div
             className={styles.sort}
@@ -329,6 +357,8 @@ const Tasks = () => {
           </div>
         </div>
       </div>
+
+      {/* Tasks list */}
       <div className={styles.tasks_section}>
         <TaskHeader />
         <div className={styles.task_container}>
@@ -371,6 +401,8 @@ const Tasks = () => {
           )}
         </div>
       </div>
+
+      {/* Pagination */}
       <div className={styles.pagination}>
         <div className={styles.icon}>
           <ArrowLeft className={styles.arrow} />

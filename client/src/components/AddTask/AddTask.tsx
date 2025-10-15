@@ -60,12 +60,16 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
     dueDate: new Date(),
     attachedDocuments: [],
   });
-  const [users, setUsers] = useState<{ id: string; name: string }[]>(
-    // By default assign to self if not admin
-    APP_USER?.role !== "admin" && APP_USER
-      ? [{ id: APP_USER.id, name: APP_USER.name }]
-      : []
-  );
+  const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
+
+  useEffect(() => {
+    if (APP_USER && APP_USER.role !== "admin") {
+      setUsers([{ id: APP_USER.id, name: APP_USER.name }]);
+    } else {
+      setUsers([]);
+    }
+  }, [APP_USER]);
+
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [userModalOpen, setUserModalOpen] = useState(false);

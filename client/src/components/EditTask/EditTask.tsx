@@ -23,8 +23,6 @@ import {
 import { selectUser } from "../../store/reducers/userSlice";
 
 import {
-  // ArrowDown,
-  // ArrowUp,
   Calendar,
   Cross,
   Cross2,
@@ -99,17 +97,14 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
           };
         });
 
-        // Update task directly with new document
+        // Update task with new document
         updateTask(
           {
             id: task.id,
             updates: {
               ...task,
               users: task.users.map((u) => u.id),
-              attachedDocuments: [
-                ...(task.attachedDocuments ?? []),
-                file?.name,
-              ],
+              attachedDocuments: [...(task.attachedDocuments ?? []), file.name],
             },
           },
           (_res, err) => {
@@ -117,7 +112,6 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
               errorToast("Failed to update task with new document.");
               return;
             }
-
             successToast("Task updated successfully.");
           }
         );
@@ -127,6 +121,8 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
 
   const handleSubmit = () => {
     if (!task) return;
+
+    // Permission check: only admin or assigned users can edit
     if (
       APP_USER?.role !== "admin" &&
       !task.users.find((u) => u.id === APP_USER?.id)
@@ -134,6 +130,7 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
       errorToast("You do not have permission to edit this task.");
       return;
     }
+
     const _task: Omit<Task, "id" | "createdAt" | "updatedAt" | "users"> & {
       users: string[];
     } = {
@@ -145,6 +142,7 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
       attachedDocuments: task.attachedDocuments,
       users: task.users.map((u) => u.id),
     };
+
     updateTask({ id: task.id, updates: _task }, (_res, err) => {
       if (err) {
         errorToast("Failed to update task. Please try again.");
@@ -162,18 +160,6 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
       return {
         ...prev,
         attachedDocuments: prev.attachedDocuments.filter((d) => d !== doc),
-      };
-    });
-  };
-
-  const handleAddDoc = (doc: string) => {
-    if (!task) return;
-    if (task.attachedDocuments.includes(doc)) return;
-    setTask((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        attachedDocuments: [...prev.attachedDocuments, doc],
       };
     });
   };
@@ -215,9 +201,8 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
     }
   }, [selectedTask]);
 
-  if (!selectedTask || !task) {
-    return null;
-  }
+  if (!selectedTask || !task) return null;
+
   return (
     <div
       style={{
@@ -243,20 +228,12 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
             <div onClick={onClose} className={styles.close}>
               <Cross size={24} />
             </div>
-            {/* <div className={styles.sep} />
-          <div className={styles.arrows}>
-            <div className={styles.arrow_up}>
-              <ArrowUp size={24} />
-            </div>
-            <div className={styles.arrow_down}>
-              <ArrowDown size={24} />
-            </div>
-          </div> */}
           </div>
           <div className={styles.save} onClick={handleSubmit}>
             <p>Save</p>
           </div>
         </div>
+
         <div className={styles.main_content}>
           <input
             type="text"
@@ -265,7 +242,9 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
             value={task.title}
             onChange={(e) => setTask({ ...task, title: e.target.value })}
           />
+
           <div className={styles.form_data}>
+            {/* ASSIGNED USERS */}
             <div className={styles.form_row}>
               <div className={styles.label}>
                 <User />
@@ -273,75 +252,85 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
               </div>
               <div
                 className={styles.field}
-                onClick={() => setUserModalOpen(true)}
+                onClick={() => {
+                  if (APP_USER?.role !== "admin") {
+                    errorToast("Only admins can reassign users.");
+                    return;
+                  }
+                  setUserModalOpen(true);
+                }}
               >
-                {userModalOpen && (
+                {userModalOpen && APP_USER?.role === "admin" && (
                   <SelectAssignee
                     allUsers={allUsers}
                     onSelect={(id) => {
-                      if (APP_USER?.role !== "admin" && id !== APP_USER?.id) {
-                        errorToast(
-                          "Only admin can assign tasks to other users."
-                        );
+                      if (APP_USER?.role !== "admin") {
+                        errorToast("Only admins can reassign users.");
                         return;
                       }
-                      const _user = task.users.find((u) => u.id === id);
-                      if (_user) {
-                        setTask((prev) => {
-                          if (!prev) return null;
-                          return {
-                            ...prev,
-                            users: prev.users.filter((u) => u.id !== id),
-                          };
-                        });
+                      const existing = task.users.find((u) => u.id === id);
+                      if (existing) {
+                        setTask((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                users: prev.users.filter((u) => u.id !== id),
+                              }
+                            : null
+                        );
                         return;
                       }
                       const user = allUsers.find((u) => u.id === id);
                       if (!user) return;
-                      setTask((prev) => {
-                        if (!prev) return null;
-                        return {
-                          ...prev,
-                          users: [
-                            ...prev.users,
-                            user as Omit<TaskUser, "password">,
-                          ],
-                        };
-                      });
+                      setTask((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              users: [
+                                ...prev.users,
+                                user as Omit<TaskUser, "password">,
+                              ],
+                            }
+                          : null
+                      );
                     }}
                     ref={userModalRef}
                     selectedUsers={task.users}
                   />
                 )}
                 {task.users.length > 0 ? (
-                  task.users?.map((user) => (
+                  task.users.map((user) => (
                     <UserTag
                       id={user.id}
                       name={user.name}
                       key={user.id}
-                      onRemove={() =>
-                        setTask((prev) => {
-                          if (!prev) return null;
-                          if (
-                            APP_USER?.role !== "admin" &&
-                            user.id !== APP_USER?.id
-                          ) {
-                            errorToast(
-                              "Only admin can remove other users from the task."
-                            );
-                            return prev;
-                          }
-                          return {
-                            ...prev,
-                            users: prev.users.filter((u) => u.id !== user.id),
-                          };
-                        })
-                      }
+                      onRemove={() => {
+                        if (APP_USER?.role !== "admin") {
+                          errorToast("Only admins can remove assigned users.");
+                          return;
+                        }
+                        setTask((prev) =>
+                          prev
+                            ? {
+                                ...prev,
+                                users: prev.users.filter(
+                                  (u) => u.id !== user.id
+                                ),
+                              }
+                            : null
+                        );
+                      }}
                     />
                   ))
                 ) : (
                   <div
-                    onClick={() => setUserModalOpen(true)}
+                    onClick={() => {
+                      if (APP_USER?.role !== "admin") {
+                        errorToast("Only admins can reassign users.");
+                        return;
+                      }
+                      setUserModalOpen(true);
+                    }}
                     className={styles.wrapper}
                   >
                     <p>assign user...</p>
@@ -349,6 +338,8 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
                 )}
               </div>
             </div>
+
+            {/* STATUS */}
             <div className={styles.form_row}>
               <div className={styles.label}>
                 <Target />
@@ -363,22 +354,18 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
                     ref={statusModalRef}
                     selectedState={task.status}
                     onSelect={(val: TaskStatus) => {
-                      setTask((prev) => {
-                        if (!prev) return null;
-                        return {
-                          ...prev,
-                          status: val,
-                        };
-                      });
+                      setTask((prev) =>
+                        prev ? { ...prev, status: val } : null
+                      );
                       setStatusModalOpen(false);
                     }}
                   />
                 )}
-                {task.status == "late" ? (
+                {task.status === "late" ? (
                   <div className={styles.late}>
                     <p>late</p>
                   </div>
-                ) : task.status == "done" ? (
+                ) : task.status === "done" ? (
                   <div className={styles.done}>
                     <p>done</p>
                   </div>
@@ -389,6 +376,8 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
                 )}
               </div>
             </div>
+
+            {/* PRIORITY */}
             <div className={styles.form_row}>
               <div className={styles.label}>
                 <Flame />
@@ -403,26 +392,22 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
                     ref={priorityModalRef}
                     selectedState={task.priority}
                     onSelect={(val: TaskPriority) => {
-                      setTask((prev) => {
-                        if (!prev) return null;
-                        return {
-                          ...prev,
-                          priority: val,
-                        };
-                      });
+                      setTask((prev) =>
+                        prev ? { ...prev, priority: val } : null
+                      );
                       setPriorityModalOpen(false);
                     }}
                   />
                 )}
-                {task.priority == "low" ? (
+                {task.priority === "low" ? (
                   <div className={styles.low}>
                     <p>low</p>
                   </div>
-                ) : task.priority == "medium" ? (
+                ) : task.priority === "medium" ? (
                   <div className={styles.medium}>
                     <p>medium</p>
                   </div>
-                ) : task.priority == "high" ? (
+                ) : task.priority === "high" ? (
                   <div className={styles.high}>
                     <p>high</p>
                   </div>
@@ -433,6 +418,8 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
                 )}
               </div>
             </div>
+
+            {/* DUE DATE */}
             <div className={styles.form_row}>
               <div className={styles.label}>
                 <Calendar />
@@ -455,13 +442,18 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
               />
             </div>
           </div>
+
           <div className={styles.divider} />
+
+          {/* DESCRIPTION */}
           <textarea
             className={styles.description}
             placeholder="task description..."
             value={task.description ?? ""}
             onChange={(e) => setTask({ ...task, description: e.target.value })}
           />
+
+          {/* FILE UPLOADS */}
           <div className={styles.upload}>
             <div onClick={handleDivClick} className={styles.upload_file}>
               <input
@@ -475,13 +467,7 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
               <p>Upload file</p>
             </div>
             {newFiles?.map((doc: string, idx: number) => (
-              <div
-                key={idx}
-                className={styles.doc}
-                onClick={() => {
-                  getDoc(doc);
-                }}
-              >
+              <div key={idx} className={styles.doc} onClick={() => getDoc(doc)}>
                 <Doc />
                 <p>{doc}</p>
                 {task.attachedDocuments.includes(doc) && (
