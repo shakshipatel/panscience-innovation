@@ -7,7 +7,7 @@
   align-items: center;
   gap: 1.5rem;
   border-radius: 1.5rem;
-  background: var(--Bg-colors-opaque, #FFF);
+  background: var(--Bg-colors-opaque, #fff);
 
   .action_container {
     display: flex;
@@ -32,7 +32,7 @@
       .priority {
         @extend %button;
         position: relative;
-        background: var(--Bg-colors-grey-regular, #F0F3FA);
+        background: var(--Bg-colors-grey-regular, #f0f3fa);
 
         .indicator {
           z-index: 10;
@@ -43,7 +43,7 @@
           right: 0.125rem;
           top: 0.125rem;
           border-radius: 100%;
-          background: var(--Purple, #7C3AED);
+          background: var(--Purple, #7c3aed);
         }
       }
 
@@ -57,7 +57,7 @@
           min-width: 0.5rem;
           min-height: 0.5rem;
           aspect-ratio: 1/1;
-          background: var(--Orange, #FF6204);
+          background: var(--Orange, #ff6204);
           position: absolute;
           right: 0.125rem;
           top: 0.125rem;
@@ -79,7 +79,7 @@
           right: 0.125rem;
           top: 0.125rem;
           border-radius: 100%;
-          background: var(--Blue, #09AEEB);
+          background: var(--Blue, #09aeeb);
         }
       }
 
@@ -103,12 +103,12 @@
         padding: 0.5rem 0.75rem !important;
         position: relative;
 
-        background: var(--Bg-colors-grey-light, #F9FBFF);
+        background: var(--Bg-colors-grey-light, #f9fbff);
       }
 
       .add_task {
         @extend %button;
-        background: var(--Orange, #FF6204);
+        background: var(--Orange, #ff6204);
         padding: 0.5rem 0.75rem !important;
 
         svg * {
@@ -116,7 +116,7 @@
         }
 
         p {
-          color: var(--Text-colors-primary-inverted, #FFF) !important;
+          color: var(--Text-colors-primary-inverted, #fff) !important;
         }
       }
     }
@@ -130,17 +130,12 @@
     align-self: stretch;
     overflow-x: auto;
 
-    &::-webkit-scrollbar {
-      display: none;
-    }
-
     .task_container {
       display: flex;
       flex-direction: column;
       align-items: center;
       flex: 1 0 0;
       align-self: stretch;
-      // overflow-y: auto;
 
       @media (max-width: 770px) {
         min-width: 1352px;
@@ -199,10 +194,10 @@
       }
 
       &.active {
-        background: var(--Orange, #FF6204);
+        background: var(--Orange, #ff6204);
 
         p {
-          color: var(--Text-colors-primary-inverted, #FFF);
+          color: var(--Text-colors-primary-inverted, #fff);
         }
       }
     }
@@ -232,7 +227,7 @@
 .line {
   width: 100%;
   min-height: 0.03125rem;
-  background: var(--Border-colors-regular, #E2E8F0);
+  background: var(--Border-colors-regular, #e2e8f0);
 
   @media (max-width: 770px) {
     min-width: 1352px;

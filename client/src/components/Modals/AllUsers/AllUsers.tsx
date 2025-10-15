@@ -52,7 +52,13 @@ const AllUsers = ({
     <div className={styles.all_users}>
       <div className={styles.header}>
         <p>All Users ({users.length})</p>
-        <div className={styles.add_user}>
+        <div
+          className={styles.add_user}
+          onClick={() => {
+            setCreateUserModalOpen(true);
+            setAllUserModalOpen(false);
+          }}
+        >
           <p>Add new</p>
         </div>
       </div>
