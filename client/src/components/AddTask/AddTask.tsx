@@ -28,7 +28,7 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
 
   const APP_USER = useSelector(selectUser)
   const allUsers = useSelector(selectAllUsers)
-  const allDocs = useSelector(selectAllDocs)
+  // const allDocs = useSelector(selectAllDocs)
 
   const { getAllUsers } = useUser()
   const { createTask } = useTask()
@@ -43,6 +43,7 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
     attachedDocuments: [],
   })
   const [users, setUsers] = useState<{ id: string, name: string }[]>([])
+  const [newFiles, setNewFiles] = useState<{ name: string }[]>([])
   const [userModalOpen, setUserModalOpen] = useState(false)
   const [statusModalOpen, setStatusModalOpen] = useState(false)
   const [priorityModalOpen, setPriorityModalOpen] = useState(false)
@@ -74,6 +75,12 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
         }
         successToast("Document uploaded successfully.")
         _getDocs()
+        setNewFiles(prev => [
+          ...prev,
+          {
+            name: file.name
+          }
+        ])
       })
     }
   };
@@ -157,6 +164,7 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
       })
       _getDocs()
       setUsers([])
+      setNewFiles([])
     }
   }, [visible])
   return (
@@ -299,7 +307,7 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
             <p>Upload file</p>
           </div>
           {
-            allDocs?.map((doc: string, idx: number) => (
+            newFiles?.map((file) => file.name)?.map((doc: string, idx: number) => (
               <div key={idx} className={styles.doc} onClick={() => {
                 if (!task.attachedDocuments.includes(doc)) {
                   if (task.attachedDocuments.length >= 3) {
