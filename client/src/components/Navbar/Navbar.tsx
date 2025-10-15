@@ -1,11 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 
-import AllUsers from "../Modals/AllUsers/AllUsers";
-import CreateUser from "../Modals/CreateUser/CreateUser";
-
 import { logoutUser, selectUser } from "../../store/reducers/userSlice";
 
+import AllUsers from "../Modals/AllUsers/AllUsers";
+import CreateUser from "../Modals/CreateUser/CreateUser";
 import { AddUser, Logout, User } from "../../icons";
 import styles from "./Navbar.module.scss";
 

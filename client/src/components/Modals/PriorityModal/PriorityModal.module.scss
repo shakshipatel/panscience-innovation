@@ -7,8 +7,8 @@
   align-items: center;
   gap: 0.25rem;
   border-radius: 0.75rem;
-  border: 1px solid var(--Border-colors-light, #F2F6FC);
-  background: var(--Bg-colors-opaque, #FFF);
+  border: 1px solid var(--Border-colors-light, #f2f6fc);
+  background: var(--Bg-colors-opaque, #fff);
   box-shadow: 1px 4px 12px 4px rgba(0, 0, 0, 0.04);
   position: absolute;
   top: 1.25rem;
@@ -39,14 +39,15 @@
     }
   }
 
-  .high, .urgent {
+  .high,
+  .urgent {
     @extend %row;
 
     div {
       background: rgba(169, 30, 12, 0.08);
 
       p {
-        color: #A91E0C;
+        color: #a91e0c;
       }
     }
   }
@@ -55,10 +56,10 @@
     @extend %row;
 
     div {
-    background: rgba(255, 98, 4, 0.08);
+      background: rgba(255, 98, 4, 0.08);
 
       p {
-        color: #FF6204;
+        color: #ff6204;
       }
     }
   }
@@ -70,7 +71,7 @@
       background: rgba(9, 174, 235, 0.08);
 
       p {
-        color: #09AEEB;
+        color: #09aeeb;
       }
     }
   }

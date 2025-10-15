@@ -1,12 +1,11 @@
 import { useRef, useState, useEffect } from "react";
 
 import useUser from "../../../api/useUser";
+import { successToast } from "../../../lib/toast";
 
 import RoleModal from "../RoleModal/RoleModal";
-
-import styles from "./CreateUser.module.scss";
 import { User } from "../../../icons";
-import { successToast } from "../../../lib/toast";
+import styles from "./CreateUser.module.scss";
 
 const CreateUser = ({
   setCreateUserModalOpen,

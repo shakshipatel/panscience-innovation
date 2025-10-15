@@ -31,10 +31,5 @@ taskRouter.post(
   taskController.paginateTasks
 );
 taskRouter.put("/", authMiddleware.authenticate, taskController.updateTask);
-taskRouter.delete(
-  "/:id",
-  authMiddleware.authenticate,
-  taskController.deleteTask
-);
 
 export default taskRouter;

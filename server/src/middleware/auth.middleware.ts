@@ -33,7 +33,7 @@ class AuthMiddleware {
       if (!token) {
         return UnauthorizedResponse.send(
           res,
-          "Access denied. No token provided.",
+          "Access denied. No token provided."
         );
       }
 
@@ -41,7 +41,7 @@ class AuthMiddleware {
       if (!decoded) {
         return UnauthorizedResponse.send(
           res,
-          "Access denied. Invalid token provided.",
+          "Access denied. Invalid token provided."
         );
       }
 
@@ -49,29 +49,29 @@ class AuthMiddleware {
       if (!verified) {
         return UnauthorizedResponse.send(
           res,
-          "Access denied. Invalid token provided.",
+          "Access denied. Invalid token provided."
         );
       }
-      
+
       const userRes = await this.userService.getUserByEmail(
-        verified?.user?.emailId || verified?.user?.email,
+        verified?.user?.emailId || verified?.user?.email
       );
-      
+
       if (!userRes) {
         logger.error(`Error getting user:`);
         return UnauthorizedResponse.send(res, "Access denied, Invalid token.");
       }
-      
+
       req.user = userRes;
       return next();
     } catch (error: any) {
       logger.error(
         `Error in AuthMiddleware.authenticate: ${error.message}`,
         error
-      )
+      );
       return InternalServerErrorResponse.send(res, error.message);
     }
-  }
+  };
 
   async authorize(req: any, res: Response, next: NextFunction) {
     try {
@@ -79,7 +79,7 @@ class AuthMiddleware {
       if (user?.role !== "admin") {
         return UnauthorizedResponse.send(
           res,
-          "Access denied. Only admins can perform this action.",
+          "Access denied. Only admins can perform this action."
         );
       }
 

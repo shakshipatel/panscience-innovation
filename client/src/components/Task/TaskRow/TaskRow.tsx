@@ -1,11 +1,10 @@
 import { format } from "date-fns";
 
-import { stringToHexCompact } from "../../UserTag/UserTag";
-
 import type { TaskPriority, TaskStatus } from "../../../types";
 
-import styles from "./TaskRow.module.scss";
+import { stringToHexCompact } from "../../UserTag/UserTag";
 import { Attachment, Doc2 } from "../../../icons";
+import styles from "./TaskRow.module.scss";
 
 type Props = {
   title: string;

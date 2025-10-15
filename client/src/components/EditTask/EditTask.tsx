@@ -10,10 +10,6 @@ import {
 import { useDocs, useTask, useUser } from "../../api";
 import { errorToast, successToast } from "../../lib/toast";
 import { useOutsideClickHandler } from "../../hooks";
-
-import { PriorityModal, SelectAssignee, SelectStatus } from "../Modals";
-import UserTag from "../UserTag/UserTag";
-
 import { selectAllUsers, setAllUsers } from "../../store/reducers/accountSlice";
 import {
   selectAllDocs,
@@ -22,6 +18,8 @@ import {
 } from "../../store/reducers/taskSlice";
 import { selectUser } from "../../store/reducers/userSlice";
 
+import { PriorityModal, SelectAssignee, SelectStatus } from "../Modals";
+import UserTag from "../UserTag/UserTag";
 import {
   Calendar,
   Cross,

@@ -1,12 +1,13 @@
-import { Tick } from "../../../icons"
-import type { TaskPriority } from "../../../types"
-import styles from "./PriorityModal.module.scss"
+import type { TaskPriority } from "../../../types";
+
+import { Tick } from "../../../icons";
+import styles from "./PriorityModal.module.scss";
 
 type Props = {
-  ref: React.RefObject<null>,
-  onSelect: (priority: TaskPriority) => void,
-  selectedState: string,
-}
+  ref: React.RefObject<null>;
+  onSelect: (priority: TaskPriority) => void;
+  selectedState: string;
+};
 
 const PriorityModal = ({ ref, onSelect, selectedState }: Props) => {
   return (
@@ -36,7 +37,7 @@ const PriorityModal = ({ ref, onSelect, selectedState }: Props) => {
         {selectedState === "urgent" && <Tick />}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PriorityModal
+export default PriorityModal;

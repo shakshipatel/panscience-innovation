@@ -2,16 +2,14 @@ import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
-// import { ROLE_ROUTES } from "./lib";
-import { logoutUser, selectUser, setPartialUser } from "../store/reducers/userSlice";
+import {
+  logoutUser,
+  selectUser,
+  setPartialUser,
+} from "../store/reducers/userSlice";
 import { useUser } from "../api";
 
-// import Sidebar from "../components/Sidebar/Sidebar";
-import { Login, Register, Tasks } from "../pages"
-
-// import { SLICE_NAMES } from "../constants/enums";
-
-// import { RedirectOAuth } from "../pages";
+import { Login, Register, Tasks } from "../pages";
 
 import styles from "./RoleRoutes.module.scss";
 
@@ -33,7 +31,7 @@ const RoleRoutes = () => {
             navigate("/auth/login");
           }
         }
-        dispatch(setPartialUser(_res?.data ));
+        dispatch(setPartialUser(_res?.data));
       });
     }
   }, []);

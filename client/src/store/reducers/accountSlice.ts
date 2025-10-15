@@ -1,14 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 import { SLICE_NAMES } from "../../constants/enums";
 import type { RootState } from "..";
 
 type AccountSlice = {
   allUsers: { id: string; name: string }[];
-}
+};
 
 const initialState: AccountSlice = {
   allUsers: [],
-}
+};
 
 const accountSlice = createSlice({
   name: SLICE_NAMES.ACCOUNT,
@@ -18,10 +19,10 @@ const accountSlice = createSlice({
       return {
         ...state,
         allUsers: actions.payload,
-      }
+      };
     },
-  }
-})
+  },
+});
 
 export const selectAllUsers = (state: RootState) => state.account.allUsers;
 

@@ -1,6 +1,6 @@
-import { Tick } from "../../../icons";
-
 import type { TaskStatus } from "../../../types";
+
+import { Tick } from "../../../icons";
 import styles from "./SelectStatus.module.scss";
 
 type Props = {

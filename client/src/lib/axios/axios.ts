@@ -2,7 +2,6 @@ import axios from "axios";
 
 import { SLICE_NAMES } from "../../constants/enums";
 
-// instance
 const axios_instance = axios.create({
   baseURL: `${import.meta.env.VITE_DEPLOYED_BACKEND_HOSTNAME}/v1`,
   headers: {
@@ -12,9 +11,6 @@ const axios_instance = axios.create({
 
 const axios_instanceFormData = axios.create({
   baseURL: `${import.meta.env.VITE_DEPLOYED_BACKEND_HOSTNAME}/v1`,
-  // headers: {
-  //   "Content-Type": "multipart/form-data",
-  // },
 });
 
 axios_instance.interceptors.request.use(
@@ -36,7 +32,7 @@ axios_instance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  },
+  }
 );
 
 axios_instanceFormData.interceptors.request.use(
@@ -58,7 +54,7 @@ axios_instanceFormData.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  },
+  }
 );
 
 export { axios_instance, axios_instanceFormData };

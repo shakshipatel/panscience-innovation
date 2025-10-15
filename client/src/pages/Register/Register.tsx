@@ -1,7 +1,9 @@
-import styles from "./Register.module.scss";
-import { useUser } from "../../api";
 import { useState } from "react";
+
 import { successToast } from "../../lib/toast";
+import { useUser } from "../../api";
+
+import styles from "./Register.module.scss";
 
 const Register = () => {
   const { register, userLoading } = useUser();

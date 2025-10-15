@@ -1,6 +1,19 @@
 import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import { useOutsideClickHandler } from "../../hooks";
+import { useTask, useUser } from "../../api";
+import { errorToast } from "../../lib/toast";
+import type { TaskPriority, TaskStatus } from "../../types";
+import {
+  selectPaginationTasks,
+  selectSelectedTask,
+  setPaginationTasks,
+  setSelectedTask,
+} from "../../store/reducers/taskSlice";
+import { selectAllUsers, setAllUsers } from "../../store/reducers/accountSlice";
+import { selectUser } from "../../store/reducers/userSlice";
+
 import { Navbar } from "../../components";
 import AddTask from "../../components/AddTask/AddTask";
 import { TaskHeader, TaskRow } from "../../components/Task";
@@ -11,21 +24,6 @@ import {
   StatusFilter,
   UserFilter,
 } from "../../components/Filters";
-
-import { useOutsideClickHandler } from "../../hooks";
-import { useTask, useUser } from "../../api";
-import { errorToast } from "../../lib/toast";
-import type { TaskPriority, TaskStatus } from "../../types";
-
-import {
-  selectPaginationTasks,
-  selectSelectedTask,
-  setPaginationTasks,
-  setSelectedTask,
-} from "../../store/reducers/taskSlice";
-import { selectAllUsers, setAllUsers } from "../../store/reducers/accountSlice";
-import { selectUser } from "../../store/reducers/userSlice";
-
 import {
   Add,
   ArrowLeft,

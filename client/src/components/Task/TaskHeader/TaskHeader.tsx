@@ -1,6 +1,6 @@
 import styles from "./TaskHeader.module.scss";
 
-type Props = {}
+type Props = {};
 
 const TaskHeader = ({}: Props) => {
   return (
@@ -27,7 +27,7 @@ const TaskHeader = ({}: Props) => {
         <p>ATTACHMENTS</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TaskHeader
+export default TaskHeader;

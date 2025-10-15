@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 
 import { useUser } from "../../api";
-
 import { setUser } from "../../store/reducers/userSlice";
 
 import styles from "./Login.module.scss";
 
 const Login = () => {
   const dispatch = useDispatch();
+
   const { login, userLoading } = useUser();
 
   const [email, setEmail] = useState("");

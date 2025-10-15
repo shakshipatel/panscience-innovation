@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import useUser from "../../../api/useUser";
-
 import { selectUser } from "../../../store/reducers/userSlice";
 
 import {
@@ -15,7 +14,6 @@ import {
   Upload,
   User,
 } from "../../../icons";
-
 import styles from "./AllUsers.module.scss";
 
 const AllUsers = ({

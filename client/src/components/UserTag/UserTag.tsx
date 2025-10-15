@@ -1,13 +1,15 @@
 import { useSelector } from "react-redux";
-import { Cross } from "../../icons";
-import styles from "./UserTag.module.scss";
+
 import { selectUser } from "../../store/reducers/userSlice";
 
+import { Cross } from "../../icons";
+import styles from "./UserTag.module.scss";
+
 type Props = {
-  id: string,
-  name: string,
-  onRemove?: () => void,
-}
+  id: string;
+  name: string;
+  onRemove?: () => void;
+};
 
 export function stringToHexCompact(str: string) {
   let hash = 0;
@@ -26,19 +28,30 @@ export function stringToHexCompact(str: string) {
     .join("")}`.toUpperCase();
 }
 
-
 const UserTag = ({ id, name, onRemove }: Props) => {
-  const APP_USER = useSelector(selectUser)
+  const APP_USER = useSelector(selectUser);
 
   return (
-    <div className={styles.user_tag} onClick={e => e.stopPropagation()}>
-      <div className={styles.icon} style={{background: stringToHexCompact(id)}} >
-        <p>{name?.split(" ")?.map((word) => word[0])?.join("")?.slice(0, 2)}</p>
+    <div className={styles.user_tag} onClick={(e) => e.stopPropagation()}>
+      <div
+        className={styles.icon}
+        style={{ background: stringToHexCompact(id) }}
+      >
+        <p>
+          {name
+            ?.split(" ")
+            ?.map((word) => word[0])
+            ?.join("")
+            ?.slice(0, 2)}
+        </p>
       </div>
-      <p className={styles.name}>{name}{APP_USER?.id === id ? " (Me)" : ""}</p>
+      <p className={styles.name}>
+        {name}
+        {APP_USER?.id === id ? " (Me)" : ""}
+      </p>
       <Cross className={styles.cursor} size={16} onClick={onRemove} />
     </div>
-  )
-}
+  );
+};
 
-export default UserTag
+export default UserTag;

@@ -1,8 +1,10 @@
-import { Toaster } from "react-hot-toast"
-import { Provider } from "react-redux"
-import { BrowserRouter } from "react-router-dom"
-import store from "./store"
-import RoleRoutes from "./rbac/RoleRoutes"
+import { Toaster } from "react-hot-toast";
+import { Provider } from "react-redux";
+import { BrowserRouter } from "react-router-dom";
+
+import store from "./store";
+
+import RoleRoutes from "./rbac/RoleRoutes";
 
 const App = () => {
   return (
@@ -12,13 +14,13 @@ const App = () => {
           position="top-right"
           toastOptions={{
             duration: 3000,
-            style: { fontSize: "14px" },
+            style: { fontSize: "16px" },
           }}
         />
         <RoleRoutes />
       </Provider>
     </BrowserRouter>
-  )
-}
+  );
+};
 
-export default App
+export default App;

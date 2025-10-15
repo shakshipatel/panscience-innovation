@@ -1,11 +1,14 @@
 import type { Request, Response } from "express";
+
 import type UserService from "../service/user.service";
+
 import {
   BadRequestResponse,
   InternalServerErrorResponse,
   SuccessResponse,
 } from "../utils/responses";
 import logger from "../utils/logger";
+
 import type { Role } from "../../generated/prisma";
 
 class UserController {

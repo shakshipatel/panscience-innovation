@@ -7,8 +7,8 @@
   align-items: center;
   gap: 0.25rem;
   border-radius: 0.75rem;
-  border: 1px solid var(--Border-colors-light, #F2F6FC);
-  background: var(--Bg-colors-opaque, #FFF);
+  border: 1px solid var(--Border-colors-light, #f2f6fc);
+  background: var(--Bg-colors-opaque, #fff);
   box-shadow: 1px 4px 12px 4px rgba(0, 0, 0, 0.04);
   position: absolute;
   top: 1.25rem;
@@ -24,7 +24,7 @@
     border-radius: 0.5rem;
 
     p {
-      color: var(--Text-colors-secondary-new, #646E7D);
+      color: var(--Text-colors-secondary-new, #646e7d);
       font-size: 0.875rem;
       font-style: normal;
       font-weight: 400;
@@ -43,7 +43,7 @@
     border-radius: 0.5rem;
 
     &:hover {
-      background: var(--Bg-colors-grey-light, #F9FBFF);
+      background: var(--Bg-colors-grey-light, #f9fbff);
     }
 
     p {
@@ -63,11 +63,11 @@
       background: rgba(255, 98, 4, 0.08);
 
       p {
-        color: var(--Orange, #FF6204) !important;
+        color: var(--Orange, #ff6204) !important;
       }
 
       svg * {
-        fill: var(--Orange, #FF6204);
+        fill: var(--Orange, #ff6204);
       }
     }
   }

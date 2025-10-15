@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
+
+import { selectUser } from "../../../store/reducers/userSlice";
+
 import { Tick } from "../../../icons";
 import styles from "./SelectAssignee.module.scss";
-import { useSelector } from "react-redux";
-import { selectUser } from "../../../store/reducers/userSlice";
 
 type Props = {
   allUsers: { id: string; name: string }[];

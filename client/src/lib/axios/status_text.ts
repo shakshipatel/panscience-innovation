@@ -1,4 +1,3 @@
-// axios status text
 export const status_text = {
   200: "OK",
   201: "Created",
