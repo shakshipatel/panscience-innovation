@@ -36,6 +36,7 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
   const { getDocs, uploadDoc } = useDocs()
 
   const [task, setTask] = useState<Task | null>(selectedTask)
+  const [newFiles, setNewFiles] = useState<string[]>([])
   const [userModalOpen, setUserModalOpen] = useState(false)
   const [statusModalOpen, setStatusModalOpen] = useState(false)
   const [priorityModalOpen, setPriorityModalOpen] = useState(false)
@@ -67,6 +68,21 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
         }
         successToast("Document uploaded successfully.")
         _getDocs()
+        setNewFiles(prev => [
+          ...prev,
+          file.name
+        ])
+        if (!task) return
+        setTask(prev => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            attachedDocuments: [
+              ...(prev.attachedDocuments ?? []),
+              file.name
+            ]
+          };
+        })
       })
     }
   };
@@ -152,6 +168,7 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
   useEffect(() => {
     if (selectedTask) {
       setTask(selectedTask)
+      setNewFiles(selectedTask?.attachedDocuments || [])
     }
   }, [selectedTask])
 
@@ -325,7 +342,7 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
               <p>Upload file</p>
             </div>
             {
-              allDocs?.map((doc: string, idx: number) => (
+              newFiles?.map((doc: string, idx: number) => (
                 <div key={idx} className={styles.doc} onClick={() => {
                   if (!task.attachedDocuments.includes(doc)) {
                     if (task.attachedDocuments.length >= 3) {
