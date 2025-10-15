@@ -52,7 +52,7 @@ const Register = () => {
           <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter your password..." className={styles.password} />
         </div>
         <div onClick={handleLogin} className={styles.button}>
-          <p>Login</p>
+          <p>Register</p>
         </div>
         <p className={styles.alter}>Already have an account? <span onClick={() => window.location.href = "/login"}>Login here...</span></p>
       </div>
