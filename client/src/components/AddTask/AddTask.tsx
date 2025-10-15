@@ -11,11 +11,7 @@ import { useDocs, useTask, useUser } from "../../api";
 import { errorToast, successToast } from "../../lib/toast";
 import { useOutsideClickHandler } from "../../hooks";
 import { selectAllUsers, setAllUsers } from "../../store/reducers/accountSlice";
-import {
-  selectAllDocs,
-  selectSelectedTask,
-  setAllDocs,
-} from "../../store/reducers/taskSlice";
+import { selectAllDocs, setAllDocs } from "../../store/reducers/taskSlice";
 import { selectUser } from "../../store/reducers/userSlice";
 
 import { PriorityModal, SelectAssignee, SelectStatus } from "../Modals";
@@ -39,6 +35,15 @@ type Props = {
   onCreate: () => void;
 };
 
+type CreateTask = {
+  title: string;
+  description: string;
+  priority: TaskPriority;
+  status: TaskStatus;
+  dueDate: Date;
+  attachedDocuments: string[];
+};
+
 const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
   const dispatch = useDispatch();
 
@@ -58,25 +63,24 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
     dueDate: new Date(),
     attachedDocuments: [],
   });
-  const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
 
+  const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [userModalOpen, setUserModalOpen] = useState(false);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [priorityModalOpen, setPriorityModalOpen] = useState(false);
 
-  const userModalRef = useOutsideClickHandler(() => {
-    setUserModalOpen(false);
-  });
-  const statusModalRef = useOutsideClickHandler(() => {
-    setStatusModalOpen(false);
-  });
-  const priorityModalRef = useOutsideClickHandler(() => {
-    setPriorityModalOpen(false);
-  });
+  const userModalRef = useOutsideClickHandler(() => setUserModalOpen(false));
+  const statusModalRef = useOutsideClickHandler(() =>
+    setStatusModalOpen(false)
+  );
+  const priorityModalRef = useOutsideClickHandler(() =>
+    setPriorityModalOpen(false)
+  );
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // File upload
   const handleDivClick = () => {
     if (isUploading) {
       errorToast("Please wait for the current upload to complete.");
@@ -89,14 +93,12 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (file.type !== "application/pdf") {
       errorToast("Please upload only PDF files.");
       e.target.value = "";
       return;
     }
 
-    // Validate file size (e.g., 10MB max)
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
       errorToast("File size must be less than 10MB.");
@@ -104,7 +106,6 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
       return;
     }
 
-    // Check if file already uploaded
     if (uploadedFiles.includes(file.name)) {
       errorToast("This file has already been uploaded.");
       e.target.value = "";
@@ -117,7 +118,7 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
 
     uploadDoc(formData, (res, err) => {
       setIsUploading(false);
-      e.target.value = ""; // Reset input
+      e.target.value = "";
 
       if (err) {
         errorToast("Failed to upload document. Please try again.");
@@ -125,13 +126,20 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
       }
 
       successToast("Document uploaded successfully.");
-      setUploadedFiles((prev) => [...prev, file.name]);
+      const fileName = file.name;
+
+      setUploadedFiles((prev) => [...prev, fileName]);
+      // Auto attach uploaded file to task
+      setTask((prev) => ({
+        ...prev,
+        attachedDocuments: [...prev.attachedDocuments, fileName],
+      }));
       _getDocs();
     });
   };
 
+  // Task submission
   const handleSubmit = () => {
-    // Validation checks
     if (!APP_USER) {
       errorToast("User not found. Please login again.");
       return;
@@ -147,10 +155,7 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
       return;
     }
 
-    if (
-      APP_USER?.role !== "admin" &&
-      !users.find((u) => u.id === APP_USER?.id)
-    ) {
+    if (APP_USER.role !== "admin" && !users.find((u) => u.id === APP_USER.id)) {
       errorToast("You must assign yourself to the task.");
       return;
     }
@@ -162,9 +167,9 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
 
     createTask(
       task,
-      APP_USER?.role === "admin"
+      APP_USER.role === "admin"
         ? users.map((u) => ({ id: u.id }))
-        : [{ id: APP_USER?.id }],
+        : [{ id: APP_USER.id }],
       (res, err) => {
         if (err) {
           errorToast("Failed to create task. Please try again.");
@@ -192,36 +197,11 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
 
   const handleRemoveDoc = (doc: string, e: React.MouseEvent) => {
     e.stopPropagation();
-
-    // Remove from attached documents
     setTask((prev) => ({
       ...prev,
       attachedDocuments: prev.attachedDocuments.filter((d) => d !== doc),
     }));
-
-    // Remove from uploaded files list
     setUploadedFiles((prev) => prev.filter((fileName) => fileName !== doc));
-  };
-
-  const handleAddDoc = (doc: string) => {
-    if (task.attachedDocuments.includes(doc)) {
-      // Remove if already attached
-      setTask((prev) => ({
-        ...prev,
-        attachedDocuments: prev.attachedDocuments.filter((d) => d !== doc),
-      }));
-      return;
-    }
-
-    if (task.attachedDocuments.length >= 5) {
-      errorToast("You can attach up to 5 documents only.");
-      return;
-    }
-
-    setTask((prev) => ({
-      ...prev,
-      attachedDocuments: [...prev.attachedDocuments, doc],
-    }));
   };
 
   const fetchAllUsers = () => {
@@ -250,9 +230,7 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
   }, []);
 
   useEffect(() => {
-    if (!visible) {
-      resetForm();
-    }
+    if (!visible) resetForm();
   }, [visible]);
 
   useEffect(() => {
@@ -287,6 +265,7 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
           onChange={(e) => setTask({ ...task, title: e.target.value })}
         />
         <div className={styles.form_data}>
+          {/* Assigned Users */}
           <div className={styles.form_row}>
             <div className={styles.label}>
               <User />
@@ -318,15 +297,13 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
                 />
               )}
               {users.length > 0 ? (
-                users?.map((user) => (
+                users.map((user) => (
                   <UserTag
                     id={user.id}
                     name={user.name}
                     key={user.id}
                     onRemove={() =>
-                      setUsers((prev) => {
-                        return prev.filter((u) => u.id !== user.id);
-                      })
+                      setUsers((prev) => prev.filter((u) => u.id !== user.id))
                     }
                   />
                 ))
@@ -340,6 +317,8 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
               )}
             </div>
           </div>
+
+          {/* Status */}
           <div className={styles.form_row}>
             <div className={styles.label}>
               <Target />
@@ -354,29 +333,26 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
                   ref={statusModalRef}
                   selectedState={task.status}
                   onSelect={(val: TaskStatus) => {
-                    setTask((prev) => ({
-                      ...prev,
-                      status: val,
-                    }));
+                    setTask((prev) => ({ ...prev, status: val }));
                     setStatusModalOpen(false);
                   }}
                 />
               )}
-              {task.status === "late" ? (
-                <div className={styles.late}>
-                  <p>late</p>
-                </div>
-              ) : task.status === "done" ? (
-                <div className={styles.done}>
-                  <p>done</p>
-                </div>
-              ) : (
-                <div className={styles.progress}>
-                  <p>progress</p>
-                </div>
-              )}
+              <div
+                className={
+                  task.status === "late"
+                    ? styles.late
+                    : task.status === "done"
+                    ? styles.done
+                    : styles.progress
+                }
+              >
+                <p>{task.status}</p>
+              </div>
             </div>
           </div>
+
+          {/* Priority */}
           <div className={styles.form_row}>
             <div className={styles.label}>
               <Flame />
@@ -391,33 +367,28 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
                   ref={priorityModalRef}
                   selectedState={task.priority}
                   onSelect={(val: TaskPriority) => {
-                    setTask((prev) => ({
-                      ...prev,
-                      priority: val,
-                    }));
+                    setTask((prev) => ({ ...prev, priority: val }));
                     setPriorityModalOpen(false);
                   }}
                 />
               )}
-              {task.priority === "low" ? (
-                <div className={styles.low}>
-                  <p>low</p>
-                </div>
-              ) : task.priority === "medium" ? (
-                <div className={styles.medium}>
-                  <p>medium</p>
-                </div>
-              ) : task.priority === "high" ? (
-                <div className={styles.high}>
-                  <p>high</p>
-                </div>
-              ) : (
-                <div className={styles.urgent}>
-                  <p>urgent</p>
-                </div>
-              )}
+              <div
+                className={
+                  task.priority === "low"
+                    ? styles.low
+                    : task.priority === "medium"
+                    ? styles.medium
+                    : task.priority === "high"
+                    ? styles.high
+                    : styles.urgent
+                }
+              >
+                <p>{task.priority}</p>
+              </div>
             </div>
           </div>
+
+          {/* Due Date */}
           <div className={styles.form_row}>
             <div className={styles.label}>
               <Calendar />
@@ -440,13 +411,18 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
             />
           </div>
         </div>
+
         <div className={styles.divider} />
+
+        {/* Description */}
         <textarea
           className={styles.description}
           placeholder="task description..."
           value={task.description ?? ""}
           onChange={(e) => setTask({ ...task, description: e.target.value })}
         />
+
+        {/* File Upload */}
         <div className={styles.upload}>
           <input
             type="file"

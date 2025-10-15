@@ -11,6 +11,7 @@ import {
   Doc,
   Flame,
   Target,
+  Trash,
   Upload,
   User,
 } from "../../../icons";
@@ -69,7 +70,7 @@ const AllUsers = ({
             {
               // If its me don't show delete icon, show me
               APP_USER.id !== user.id ? (
-                <Cross
+                <Trash
                   onClick={() => deleteUserData(user.id)}
                   className={styles.delete_icon}
                 />
