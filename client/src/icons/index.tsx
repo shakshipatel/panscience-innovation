@@ -30,5 +30,6 @@ export const Logout = (props: Props) => <Icon {...props} name="logout" />;
 export const Sort = (props: Props) => <Icon {...props} name="sort" />;
 export const Target = (props: Props) => <Icon {...props} name="target" />;
 export const Tick = (props: Props) => <Icon {...props} name="tick" />;
+export const Trash = (props: Props) => <Icon {...props} name="trash" />;
 export const Upload = (props: Props) => <Icon {...props} name="upload" />;
 export const User = (props: Props) => <Icon {...props} name="user" />;

@@ -35,6 +35,8 @@ import Target from './target.svg?react';
 // @ts-ignore;
 import Tick from './tick.svg?react';
 // @ts-ignore;
+import Trash from './trash.svg?react';
+// @ts-ignore;
 import Upload from './upload.svg?react';
 // @ts-ignore;
 import User from './user.svg?react';
@@ -58,6 +60,7 @@ export default {
 "sort": Sort, 
 "target": Target, 
 "tick": Tick, 
+"trash": Trash, 
 "upload": Upload, 
 "user": User, 
 };

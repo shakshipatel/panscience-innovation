@@ -1,7 +1,11 @@
 import type { Request, Response } from "express";
 import type TaskService from "../service/task.service";
 import type { PaginatedTaskRequest, TaskData, UpdateTaskData } from "../types";
-import { BadRequestResponse, InternalServerErrorResponse, SuccessResponse } from "../utils/responses";
+import {
+  BadRequestResponse,
+  InternalServerErrorResponse,
+  SuccessResponse,
+} from "../utils/responses";
 import logger from "../utils/logger";
 
 class TaskController {
@@ -15,6 +19,7 @@ class TaskController {
     this.getAllTasks = this.getAllTasks.bind(this);
     this.paginateTasks = this.paginateTasks.bind(this);
     this.updateTask = this.updateTask.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
   }
 
   async createTask(req: Request, res: Response): Promise<void> {
@@ -26,14 +31,21 @@ class TaskController {
       const data: TaskData = req.body;
 
       const createdTask = await this.taskService.createTask(data);
-      
-      return SuccessResponse.send(res, createdTask, "Task created successfully");
+
+      return SuccessResponse.send(
+        res,
+        createdTask,
+        "Task created successfully"
+      );
     } catch (error: any) {
       console.error("Error creating task:", error);
-      return InternalServerErrorResponse.send(res, error?.message || "Internal server error");
+      return InternalServerErrorResponse.send(
+        res,
+        error?.message || "Internal server error"
+      );
     }
   }
-  
+
   async getTaskById(req: Request, res: Response): Promise<void> {
     try {
       const { user } = req;
@@ -49,7 +61,10 @@ class TaskController {
       return SuccessResponse.send(res, task, "Task found successfully");
     } catch (error: any) {
       console.error("Error getting task:", error);
-      return InternalServerErrorResponse.send(res, error?.message || "Internal server error");
+      return InternalServerErrorResponse.send(
+        res,
+        error?.message || "Internal server error"
+      );
     }
   }
 
@@ -78,7 +93,10 @@ class TaskController {
       return SuccessResponse.send(res, tasks, "Tasks retrieved successfully");
     } catch (error: any) {
       logger.error("Error paginating tasks:", error);
-      return InternalServerErrorResponse.send(res, error?.message || "Internal server error");
+      return InternalServerErrorResponse.send(
+        res,
+        error?.message || "Internal server error"
+      );
     }
   }
 
@@ -91,10 +109,35 @@ class TaskController {
       }
 
       const updatedTask = await this.taskService.updateTask(id, updates);
-      return SuccessResponse.send(res, updatedTask, "Task updated successfully");
+      return SuccessResponse.send(
+        res,
+        updatedTask,
+        "Task updated successfully"
+      );
     } catch (error: any) {
       logger.error("Error updating task:", error);
-      return InternalServerErrorResponse.send(res, error?.message || "Internal server error");
+      return InternalServerErrorResponse.send(
+        res,
+        error?.message || "Internal server error"
+      );
+    }
+  }
+
+  async deleteTask(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      if (!id) {
+        return BadRequestResponse.send(res, "Task ID is required");
+      }
+
+      await this.taskService.deleteTask(id);
+      return SuccessResponse.send(res, null, "Task deleted successfully");
+    } catch (error: any) {
+      logger.error("Error deleting task:", error);
+      return InternalServerErrorResponse.send(
+        res,
+        error?.message || "Internal server error"
+      );
     }
   }
 }

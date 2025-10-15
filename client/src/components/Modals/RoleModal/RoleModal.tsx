@@ -1,18 +1,16 @@
-import { Tick } from "../../../icons";
+import { forwardRef } from "react";
 
+import { Tick } from "../../../icons";
 import styles from "./RoleModal.module.scss";
 
-const RoleModal = ({
-  ref,
-  onSelect,
-  selectedState,
-  setRoleModal,
-}: {
-  ref: React.RefObject<null>;
-  onSelect: (role: "admin" | "user") => void;
-  selectedState: string;
-  setRoleModal: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+const RoleModal = forwardRef<
+  HTMLDivElement,
+  {
+    onSelect: (role: "admin" | "user") => void;
+    selectedState: string;
+    setRoleModal: React.Dispatch<React.SetStateAction<boolean>>;
+  }
+>(({ onSelect, selectedState, setRoleModal }, ref) => {
   return (
     <div ref={ref} className={styles.select_status}>
       <div className={styles.admin}>
@@ -26,6 +24,7 @@ const RoleModal = ({
         </div>
         {selectedState === "admin" && <Tick />}
       </div>
+
       <div className={styles.user}>
         <div
           onClick={() => {
@@ -39,6 +38,6 @@ const RoleModal = ({
       </div>
     </div>
   );
-};
+});
 
 export default RoleModal;

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 import useUser from "../../../api/useUser";
 
@@ -68,6 +68,25 @@ const CreateUser = ({
   const handleCancel = () => {
     setCreateUserModalOpen(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        roleModalRef.current &&
+        !roleModalRef.current.contains(event.target as Node)
+      ) {
+        setRoleModal(false);
+      }
+    };
+
+    if (roleModal) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [roleModal]);
 
   return (
     <div className={styles.create_user}>

@@ -77,22 +77,32 @@
         }
 
         .admin {
-          div {
-            background: rgba(169, 30, 12, 0.08);
+          display: flex;
+          padding: 0.25rem 0.75rem;
+          justify-content: center;
+          align-items: center;
+          gap: 0.625rem;
+          border-radius: 12499999744rem;
+          cursor: pointer;
+          background: rgba(169, 30, 12, 0.08);
 
-            p {
-              color: #a91e0c;
-            }
+          p {
+            color: #a91e0c;
           }
         }
 
         .user {
-          div {
-            background: rgba(9, 174, 235, 0.08);
+          display: flex;
+          padding: 0.25rem 0.75rem;
+          justify-content: center;
+          align-items: center;
+          gap: 0.625rem;
+          border-radius: 12499999744rem;
+          cursor: pointer;
+          background: rgba(9, 174, 235, 0.08);
 
-            p {
-              color: #09aeeb;
-            }
+          p {
+            color: #09aeeb;
           }
         }
       }

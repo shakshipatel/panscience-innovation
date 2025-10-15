@@ -29,6 +29,7 @@ import {
   Doc,
   Flame,
   Target,
+  Trash,
   Upload,
   User,
 } from "../../icons";
@@ -50,7 +51,7 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
   const selectedTask = useSelector(selectSelectedTask);
 
   const { getAllUsers } = useUser();
-  const { updateTask } = useTask();
+  const { updateTask, deleteTask } = useTask();
   const { getDocs, uploadDoc, getDoc } = useDocs();
 
   const [task, setTask] = useState<Task | null>(selectedTask);
@@ -248,11 +249,35 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
               <Cross size={24} />
             </div>
           </div>
-          <div className={styles.save} onClick={handleSubmit}>
-            <p>Save</p>
+          <div className={styles.right_actions}>
+            {
+              // Only admin and assigned users can delete
+              (APP_USER?.role === "admin" ||
+                task.users.find((u) => u.id === APP_USER?.id)) && (
+                <div
+                  className={styles.delete}
+                  onClick={() => {
+                    if (!task) return;
+                    deleteTask(task.id, (_res, err) => {
+                      if (err) {
+                        errorToast("Failed to delete task. Please try again.");
+                        return;
+                      }
+                      successToast("Task deleted successfully.");
+                      onClose();
+                      onEdit();
+                    });
+                  }}
+                >
+                  <Trash size={24} />
+                </div>
+              )
+            }
+            <div className={styles.save} onClick={handleSubmit}>
+              <p>Save</p>
+            </div>
           </div>
         </div>
-
         <div className={styles.main_content}>
           <input
             type="text"

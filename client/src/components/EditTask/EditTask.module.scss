@@ -11,8 +11,8 @@
   right: -40%;
   top: 0;
   border-radius: 1.5rem;
-  border: 1px solid var(--Border-colors-light, #F2F6FC);
-  background: var(--Bg-colors-opaque, #FFF);
+  border: 1px solid var(--Border-colors-light, #f2f6fc);
+  background: var(--Bg-colors-opaque, #fff);
   box-shadow: 2px 8px 24px 4px rgba(0, 0, 0, 0.04);
   z-index: 10;
   transition: right 0.4s ease-in-out;
@@ -53,7 +53,7 @@
       .sep {
         min-height: 1.5rem;
         width: 0.0625rem;
-        background: var(--Border-colors-regular, #E2E8F0);
+        background: var(--Border-colors-regular, #e2e8f0);
       }
 
       .arrows {
@@ -80,23 +80,40 @@
       }
     }
 
-    .save {
-      cursor: pointer;
+    .right_actions {
       display: flex;
-      max-height: 2.5rem;
-      padding: 0.5rem 0.75rem;
       justify-content: center;
       align-items: center;
-      gap: 0.25rem;
-      border-radius: 125000000rem;
-      background: var(--Orange, #FF6204);
+      gap: 0.75rem;
+      align-items: center;
 
-      p {
-        color: var(--Text-colors-primary-inverted, #FFF);
-        font-size: 1rem;
-        font-style: normal;
-        font-weight: 500;
-        line-height: normal;
+      .delete {
+        display: flex;
+        padding: 0.5rem;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+      }
+
+      .save {
+        cursor: pointer;
+        display: flex;
+        max-height: 2.5rem;
+        padding: 0.5rem 0.75rem;
+        justify-content: center;
+        align-items: center;
+        gap: 0.25rem;
+        border-radius: 125000000rem;
+        background: var(--Orange, #ff6204);
+
+        p {
+          color: var(--Text-colors-primary-inverted, #fff);
+          font-size: 1rem;
+          font-style: normal;
+          font-weight: 500;
+          line-height: normal;
+        }
       }
     }
   }
@@ -141,11 +158,11 @@
           gap: 0.5rem;
 
           svg * {
-            fill: var(--Text-colors-secondary-new, #646E7D);
+            fill: var(--Text-colors-secondary-new, #646e7d);
           }
 
           p {
-            color: var(--Text-colors-secondary-new, #646E7D);
+            color: var(--Text-colors-secondary-new, #646e7d);
             font-size: 1.125rem;
             font-style: normal;
             font-weight: 400;
@@ -172,7 +189,7 @@
             flex: 1 0 0;
 
             p {
-              color: var(--Text-colors-secondary-new, #646E7D);
+              color: var(--Text-colors-secondary-new, #646e7d);
               font-size: 1rem;
               font-style: normal;
               font-weight: 400;
@@ -194,7 +211,7 @@
             background: rgba(169, 30, 12, 0.08);
 
             p {
-              color: #A91E0C;
+              color: #a91e0c;
               font-size: 0.875rem;
               font-style: normal;
               font-weight: 500;
@@ -213,7 +230,7 @@
             background: rgba(109, 207, 73, 0.08);
 
             p {
-              color: #2C8C09;
+              color: #2c8c09;
               font-size: 0.875rem;
               font-style: normal;
               font-weight: 500;
@@ -233,7 +250,7 @@
             background: rgba(9, 174, 235, 0.08);
 
             p {
-              color: #09AEEB;
+              color: #09aeeb;
               font-size: 0.875rem;
               font-style: normal;
               font-weight: 500;
@@ -251,7 +268,7 @@
             background: rgba(255, 98, 4, 0.08);
 
             p {
-              color: #FF6204;
+              color: #ff6204;
               font-size: 0.875rem;
               font-style: normal;
               font-weight: 500;
@@ -265,12 +282,12 @@
     .divider {
       width: 100%;
       height: 0.03125rem;
-      background: var(--Border-colors-regular, #E2E8F0);
+      background: var(--Border-colors-regular, #e2e8f0);
     }
 
     .description {
       color: var(--Text-colors-primary-new, #162029);
-      font-feature-settings: 'liga' off, 'clig' off;
+      font-feature-settings: "liga" off, "clig" off;
       font-size: 1rem;
       font-style: normal;
       font-weight: 400;
@@ -297,7 +314,7 @@
         align-items: center;
         gap: 0.25rem;
         border-radius: 12500000rem;
-        border: 1px dashed var(--Border-colors-regular, #E2E8F0);
+        border: 1px dashed var(--Border-colors-regular, #e2e8f0);
 
         p {
           overflow: hidden;
@@ -322,7 +339,7 @@
         align-items: center;
         gap: 0.25rem;
         border-radius: 12500000rem;
-        background: var(--Bg-colors-grey-light, #F9FBFF);
+        background: var(--Bg-colors-grey-light, #f9fbff);
         cursor: pointer;
 
         p {

@@ -44,6 +44,7 @@ const Navbar = ({ title }: NavbarProps) => {
   const [isCreateUserModalOpen, setCreateUserModalOpen] = useState(false);
 
   const handleModalOpen = () => {
+    setCreateUserModalOpen(false);
     setIsOpen(!isOpen);
   };
 

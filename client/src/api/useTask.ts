@@ -45,12 +45,20 @@ const useTask = () => {
       callback
     );
 
+  const deleteTask = (id: string, callback: (...args: any) => void) =>
+    runApi(
+      () => axios_instance.delete(`/task/${id}`),
+      "Failed to delete task. Please try again.",
+      callback
+    );
+
   return {
     taskLoading,
     getTasks,
     createTask,
     getPaginatedTasks,
     updateTask,
+    deleteTask,
   };
 };
 
