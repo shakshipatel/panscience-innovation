@@ -114,7 +114,7 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
       APP_USER?.role !== "admin" &&
       !users.find((u) => u.id === APP_USER?.id)
     ) {
-      errorToast("You are not assigned to this task. You cannot edit it.");
+      errorToast("Failed to create task.");
       return;
     }
     createTask(

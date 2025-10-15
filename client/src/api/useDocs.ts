@@ -9,7 +9,7 @@ const useDocs = () => {
     runApi(
       () => axios_instance.get("/files"),
       "Failed to get documents. Please try again.",
-      callback,
+      callback
     );
 
   const uploadDoc = (data: FormData, callback: (...args: any) => void) => {
@@ -18,17 +18,28 @@ const useDocs = () => {
       body: data,
     };
 
-    fetch(`${import.meta.env.VITE_DEPLOYED_BACKEND_HOSTNAME}/v1/upload`, requestOptions)
+    fetch(
+      `${import.meta.env.VITE_DEPLOYED_BACKEND_HOSTNAME}/v1/upload`,
+      requestOptions
+    )
       .then((response) => response.text())
       .then((result) => callback(JSON.parse(result), null))
       .catch((error) => callback(null, error));
-  }
+  };
+
+  const getDoc = (filename: string) => {
+    window.open(
+      `${import.meta.env.VITE_DEPLOYED_BACKEND_HOSTNAME}/v1/files/${filename}`,
+      "_blank"
+    );
+  };
 
   return {
     docsLoading,
     getDocs,
     uploadDoc,
-  }
-}
+    getDoc,
+  };
+};
 
 export default useDocs;

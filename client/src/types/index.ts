@@ -1,14 +1,6 @@
+export type TaskStatus = "late" | "done" | "progress";
 
-export type TaskStatus =
-  | "late"
-  | "done"
-  | "progress";
-
-export type TaskPriority =
-  | "low"
-  | "medium"
-  | "high"
-  | "urgent";
+export type TaskPriority = "low" | "medium" | "high" | "urgent";
 
 export type CreateTask = {
   title: string;
@@ -17,7 +9,7 @@ export type CreateTask = {
   priority: TaskPriority;
   dueDate: Date | string | null;
   attachedDocuments: string[];
-}
+};
 
 export type User = {
   id: string;
@@ -27,7 +19,7 @@ export type User = {
   updatedAt: Date | string | null;
   role: "admin" | "user";
   password: string;
-}
+};
 
 export type Task = {
   id: string;
@@ -40,9 +32,15 @@ export type Task = {
   createdAt: Date | string | null;
   updatedAt: Date | string | null;
   users: Omit<User, "password">[];
-}
+};
 
-export type UpdateTaskData = { id: string, updates: Omit<Task, "id" | "createdAt" | "updatedAt" | "users"> & { users: string[] } }
+export type UpdateTaskData = {
+  id: string;
+  updates: Omit<Task, "id" | "createdAt" | "updatedAt" | "users"> & {
+    users?: string[];
+    attachedDocuments?: string[];
+  };
+};
 
 export type PaginatedTaskRequest = {
   page: number;
@@ -51,15 +49,14 @@ export type PaginatedTaskRequest = {
     status: string[];
     priority: string[];
     users: string[];
-  }
+  };
   sortBy: string;
-  sortOrder: 'asc' | 'desc';
-}
+  sortOrder: "asc" | "desc";
+};
 
 export type PaginatedTaskResponse = {
   tasks: Task[];
   total: number;
   page: number;
   limit: number;
-}
-
+};

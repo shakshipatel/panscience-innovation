@@ -53,7 +53,7 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
 
   const { getAllUsers } = useUser();
   const { updateTask } = useTask();
-  const { getDocs, uploadDoc } = useDocs();
+  const { getDocs, uploadDoc, getDoc } = useDocs();
 
   const [task, setTask] = useState<Task | null>(selectedTask);
   const [newFiles, setNewFiles] = useState<string[]>([]);
@@ -73,7 +73,7 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleDivClick = () => {
-    fileInputRef.current?.click(); // trigger file picker
+    fileInputRef.current?.click();
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,9 +86,10 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
           errorToast("Failed to upload document. Please try again.");
           return;
         }
-        successToast("Document uploaded successfully.");
+
         _getDocs();
         setNewFiles((prev) => [...prev, file.name]);
+
         if (!task) return;
         setTask((prev) => {
           if (!prev) return null;
@@ -97,6 +98,29 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
             attachedDocuments: [...(prev.attachedDocuments ?? []), file.name],
           };
         });
+
+        // Update task directly with new document
+        updateTask(
+          {
+            id: task.id,
+            updates: {
+              ...task,
+              users: task.users.map((u) => u.id),
+              attachedDocuments: [
+                ...(task.attachedDocuments ?? []),
+                file?.name,
+              ],
+            },
+          },
+          (_res, err) => {
+            if (err) {
+              errorToast("Failed to update task with new document.");
+              return;
+            }
+
+            successToast("Task updated successfully.");
+          }
+        );
       });
     }
   };
@@ -107,7 +131,7 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
       APP_USER?.role !== "admin" &&
       !task.users.find((u) => u.id === APP_USER?.id)
     ) {
-      errorToast("You are not assigned to this task. You cannot edit it.");
+      errorToast("You do not have permission to edit this task.");
       return;
     }
     const _task: Omit<Task, "id" | "createdAt" | "updatedAt" | "users"> & {
@@ -414,7 +438,6 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
                 <Calendar />
                 <p>Due date</p>
               </div>
-              {/* { input } */}
               <input
                 type="date"
                 value={
@@ -426,7 +449,7 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
                   const value = e.target.value;
                   setTask({
                     ...task,
-                    dueDate: value ? new Date(value) : null, // if empty, set null
+                    dueDate: value ? new Date(value) : null,
                   });
                 }}
               />
@@ -440,14 +463,14 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
             onChange={(e) => setTask({ ...task, description: e.target.value })}
           />
           <div className={styles.upload}>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              accept="application/pdf" // only PDF
-              style={{ display: "none" }}
-            />
             <div onClick={handleDivClick} className={styles.upload_file}>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="application/pdf"
+                style={{ display: "none" }}
+              />
               <Upload />
               <p>Upload file</p>
             </div>
@@ -456,13 +479,7 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
                 key={idx}
                 className={styles.doc}
                 onClick={() => {
-                  if (!task.attachedDocuments.includes(doc)) {
-                    if (task.attachedDocuments.length >= 3) {
-                      errorToast("You can attach up to 5 documents only.");
-                      return;
-                    }
-                    handleAddDoc(doc);
-                  }
+                  getDoc(doc);
                 }}
               >
                 <Doc />
