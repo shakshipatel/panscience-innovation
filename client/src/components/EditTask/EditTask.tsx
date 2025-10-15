@@ -155,13 +155,32 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
 
   const handleRemoveDoc = (doc: string) => {
     if (!task) return;
-    setTask((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        attachedDocuments: prev.attachedDocuments.filter((d) => d !== doc),
-      };
-    });
+
+    const updatedDocs = task.attachedDocuments.filter((d) => d !== doc);
+
+    // Update frontend state first for instant UI feedback
+    setTask((prev) =>
+      prev ? { ...prev, attachedDocuments: updatedDocs } : null
+    );
+
+    // Then update backend immediately
+    updateTask(
+      {
+        id: task.id,
+        updates: {
+          ...task,
+          users: task.users.map((u) => u.id),
+          attachedDocuments: updatedDocs,
+        },
+      },
+      (_res, err) => {
+        if (err) {
+          errorToast("Failed to update task after removing document.");
+          return;
+        }
+        successToast("Document removed successfully.");
+      }
+    );
   };
 
   const fetchAllUsers = () => {
@@ -466,17 +485,18 @@ const EditTask = ({ onClose, visible, editTaskRef, onEdit }: Props) => {
               <Upload />
               <p>Upload file</p>
             </div>
-            {newFiles?.map((doc: string, idx: number) => (
+            {task.attachedDocuments?.map((doc: string, idx: number) => (
               <div key={idx} className={styles.doc} onClick={() => getDoc(doc)}>
                 <Doc />
                 <p>{doc}</p>
-                {task.attachedDocuments.includes(doc) && (
-                  <Cross2
-                    className={styles.cross}
-                    size={16}
-                    onClick={() => handleRemoveDoc(doc)}
-                  />
-                )}
+                <Cross2
+                  className={styles.cross}
+                  size={16}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveDoc(doc);
+                  }}
+                />
               </div>
             ))}
           </div>
