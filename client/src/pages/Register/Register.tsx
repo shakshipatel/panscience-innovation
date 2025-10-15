@@ -1,12 +1,9 @@
-import { useDispatch } from "react-redux";
-import { setUser } from "../../store/reducers/userSlice";
 import styles from "./Register.module.scss"
 import { useUser } from "../../api";
 import { useState } from "react";
 import { successToast } from "../../lib/toast";
 
 const Register = () => {
-  const dispatch = useDispatch();
   const { register } = useUser();
 
   const [email, setEmail] = useState("");
