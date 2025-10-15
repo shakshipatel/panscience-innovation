@@ -24,7 +24,7 @@ class UserController {
 
   async registerUser(req: Request, res: Response): Promise<void> {
     try {
-      const { email, password, name } = req.body;
+      const { email, password, name, role } = req.body;
       if (!email || !password || !name) {
         return BadRequestResponse.send(
           res,
@@ -32,7 +32,12 @@ class UserController {
         );
       }
 
-      const user = await this.userService.registerUser(email, password, name);
+      const user = await this.userService.registerUser(
+        email,
+        password,
+        name,
+        role || "user"
+      );
 
       return SuccessResponse.send(res, user, "User registered successfully");
     } catch (error: any) {
