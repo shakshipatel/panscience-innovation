@@ -21,5 +21,6 @@ userRouter.post("/register", userController.registerUser);
 userRouter.post("/login", userController.loginUser);
 userRouter.get("/me", authMiddleware.authenticate, userController.getMe);
 userRouter.get("/all", authMiddleware.authenticate, userController.getAllUsers);
+userRouter.patch("/role/:id", authMiddleware.authenticate, userController.updateUserRole);
 
 export default userRouter

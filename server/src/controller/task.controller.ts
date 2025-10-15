@@ -45,7 +45,7 @@ class TaskController {
         return BadRequestResponse.send(res, "User is required");
       }
 
-      const task = await this.taskService.getTaskById(id, user?.id);
+      const task = await this.taskService.getTaskById(id, user?.id, user?.role);
       return SuccessResponse.send(res, task, "Task found successfully");
     } catch (error: any) {
       console.error("Error getting task:", error);

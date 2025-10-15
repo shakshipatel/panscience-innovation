@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import type UserService from "../service/user.service";
 import { BadRequestResponse, InternalServerErrorResponse, SuccessResponse } from "../utils/responses";
 import logger from "../utils/logger";
+import type { Role } from "../../generated/prisma";
 
 class UserController {
   private userService: UserService;
@@ -13,6 +14,7 @@ class UserController {
     this.loginUser = this.loginUser.bind(this);
     this.getMe = this.getMe.bind(this);
     this.getAllUsers = this.getAllUsers.bind(this);
+    this.updateUserRole = this.updateUserRole.bind(this);
   }
 
   async registerUser(req: Request, res: Response): Promise<void> {
@@ -70,6 +72,24 @@ class UserController {
       return SuccessResponse.send(res, users, "Users fetched successfully");
     } catch (error: any) {
       logger.error("Error fetching users:", error);
+      return InternalServerErrorResponse.send(res, error.message || "Internal server error");
+    }
+  }
+
+  async updateUserRole(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { role } = req.body as { role: Role };
+      if (!id || !role) {
+        return BadRequestResponse.send(res, "User ID and role are required");
+      }
+      const updatedUser = await this.userService.updateUserRole(id, role);
+      if (!updatedUser) {
+        return BadRequestResponse.send(res, "User not found or role not updated");
+      }
+      return SuccessResponse.send(res, updatedUser, "User role updated successfully");
+    } catch (error: any) {
+      logger.error("Error updating user role:", error);
       return InternalServerErrorResponse.send(res, error.message || "Internal server error");
     }
   }

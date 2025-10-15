@@ -9,6 +9,7 @@
 //   attachedDocuments String[]
 
 import type { Task } from "../../generated/prisma";
+import { Role } from "../../generated/prisma";
 import type TaskRepository from "../repository/task.repository";
 import type { PaginatedTaskRequest, PaginatedTaskResponse, TaskData } from "../types";
 
@@ -22,7 +23,7 @@ import type { PaginatedTaskRequest, PaginatedTaskResponse, TaskData } from "../t
 
 interface ITaskService {
   createTask(data: Partial<TaskData>): Promise<Task>;
-  getTaskById(id: string, userId: string): Promise<Task | null>;
+  getTaskById(id: string, userId: string, role: string): Promise<Task | null>;
   updateTask(id: string, updates: Omit<Task, "id" | "createdAt" | "updatedAt"> & { users: string[] }): Promise<Task | null>;
   deleteTask(id: string): Promise<Task | null>;
   getAllTasks(): Promise<Task[]>;
@@ -44,9 +45,9 @@ class TaskService implements ITaskService {
     return task;
   }
 
-  async getTaskById(id: string, userId: string): Promise<Task | null> {
+  async getTaskById(id: string, userId: string, role: string): Promise<Task | null> {
     const task = await this.taskRepository.getTaskById(id);
-    if (task && !task.users.some(user => user.id === userId)) {
+    if (task && !task.users.some(user => user.id === userId) && role !== Role.admin) {
       throw new Error("You do not have access to this task");
     }
     return task;

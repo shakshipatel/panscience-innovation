@@ -21,6 +21,7 @@ import {
 import logger from "./utils/logger";
 
 import v1Router from "./routes";
+import collectRoutes from "./utils/printRoutes";
 
 const app = express();
 
@@ -141,5 +142,7 @@ app.get("/", (_: Request, res: Response) => {
     return InternalServerErrorResponse.send(res, "Internal Server Error");
   }
 });
+
+console.table(collectRoutes(app));
 
 export default app;
