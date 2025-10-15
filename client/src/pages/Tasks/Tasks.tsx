@@ -24,6 +24,7 @@ import {
   setSelectedTask,
 } from "../../store/reducers/taskSlice";
 import { selectAllUsers, setAllUsers } from "../../store/reducers/accountSlice";
+import { selectUser } from "../../store/reducers/userSlice";
 
 import {
   Add,
@@ -44,6 +45,7 @@ const Tasks = () => {
   const paginationTasks = useSelector(selectPaginationTasks);
   const selectedTask = useSelector(selectSelectedTask);
   const allUsers = useSelector(selectAllUsers);
+  const APP_USER = useSelector(selectUser);
 
   const { getPaginatedTasks } = useTask();
   const { getAllUsers } = useUser();
@@ -79,7 +81,7 @@ const Tasks = () => {
         filter: {
           priority: paginationTasks.filter.priority,
           status: paginationTasks.filter.status,
-          users: paginationTasks.filter.users,
+          users: [...paginationTasks.filter.users, APP_USER?.id || ""],
         },
         page: paginationTasks.currentPage,
         limit: LIMIT,
@@ -145,7 +147,7 @@ const Tasks = () => {
           _getPaginationTasks();
         }}
       />
-      <Navbar title="All Tasks" />
+      <Navbar title="My Tasks" />
       <div className={styles.action_container}>
         <div className={styles.left}>
           <div

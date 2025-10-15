@@ -23,8 +23,6 @@ import {
 import { selectUser } from "../../store/reducers/userSlice";
 
 import {
-  // ArrowDown,
-  // ArrowUp,
   Calendar,
   Cross,
   Cross2,
@@ -48,7 +46,7 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
 
   const APP_USER = useSelector(selectUser);
   const allUsers = useSelector(selectAllUsers);
-  // const allDocs = useSelector(selectAllDocs)
+  const allDocs = useSelector(selectAllDocs);
 
   const { getAllUsers } = useUser();
   const { createTask } = useTask();
@@ -62,8 +60,14 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
     dueDate: new Date(),
     attachedDocuments: [],
   });
-  const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
-  const [newFiles, setNewFiles] = useState<{ name: string }[]>([]);
+  const [users, setUsers] = useState<{ id: string; name: string }[]>(
+    // By default assign to self if not admin
+    APP_USER?.role !== "admin" && APP_USER
+      ? [{ id: APP_USER.id, name: APP_USER.name }]
+      : []
+  );
+  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const [userModalOpen, setUserModalOpen] = useState(false);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [priorityModalOpen, setPriorityModalOpen] = useState(false);
@@ -80,77 +84,146 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleDivClick = () => {
-    fileInputRef.current?.click(); // trigger file picker
+    if (isUploading) {
+      errorToast("Please wait for the current upload to complete.");
+      return;
+    }
+    fileInputRef.current?.click();
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const formData = new FormData();
-      formData.append("pdf", file);
-      uploadDoc(formData, (_res, err) => {
-        if (err) {
-          errorToast("Failed to upload document. Please try again.");
-          return;
-        }
-        successToast("Document uploaded successfully.");
-        _getDocs();
-        setNewFiles((prev) => [
-          ...prev,
-          {
-            name: file.name,
-          },
-        ]);
-      });
+    if (!file) return;
+
+    // Validate file type
+    if (file.type !== "application/pdf") {
+      errorToast("Please upload only PDF files.");
+      e.target.value = "";
+      return;
     }
+
+    // Validate file size (e.g., 10MB max)
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      errorToast("File size must be less than 10MB.");
+      e.target.value = "";
+      return;
+    }
+
+    // Check if file already uploaded
+    if (uploadedFiles.includes(file.name)) {
+      errorToast("This file has already been uploaded.");
+      e.target.value = "";
+      return;
+    }
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("pdf", file);
+
+    uploadDoc(formData, (res, err) => {
+      setIsUploading(false);
+      e.target.value = ""; // Reset input
+
+      if (err) {
+        errorToast("Failed to upload document. Please try again.");
+        return;
+      }
+
+      successToast("Document uploaded successfully.");
+      setUploadedFiles((prev) => [...prev, file.name]);
+      _getDocs();
+    });
   };
 
   const handleSubmit = () => {
+    // Validation checks
     if (!APP_USER) {
       errorToast("User not found. Please login again.");
       return;
     }
+
+    if (!task.title.trim()) {
+      errorToast("Please enter a task title.");
+      return;
+    }
+
+    if (users.length === 0) {
+      errorToast("Please assign at least one user to the task.");
+      return;
+    }
+
     if (
       APP_USER?.role !== "admin" &&
       !users.find((u) => u.id === APP_USER?.id)
     ) {
-      errorToast("Failed to create task.");
+      errorToast("You must assign yourself to the task.");
       return;
     }
+
+    if (isUploading) {
+      errorToast("Please wait for file upload to complete.");
+      return;
+    }
+
     createTask(
       task,
       APP_USER?.role === "admin"
         ? users.map((u) => ({ id: u.id }))
         : [{ id: APP_USER?.id }],
-      (_res, err) => {
+      (res, err) => {
         if (err) {
           errorToast("Failed to create task. Please try again.");
           return;
         }
         successToast("Task created successfully.");
-        setTask({
-          title: "",
-          description: "",
-          priority: "low",
-          status: "progress",
-          dueDate: new Date(),
-          attachedDocuments: [],
-        });
-        setUsers([]);
+        resetForm();
         onCreate();
       }
     );
   };
 
-  const handleRemoveDoc = (doc: string) => {
+  const resetForm = () => {
+    setTask({
+      title: "",
+      description: "",
+      priority: "low",
+      status: "progress",
+      dueDate: new Date(),
+      attachedDocuments: [],
+    });
+    setUsers([]);
+    setUploadedFiles([]);
+  };
+
+  const handleRemoveDoc = (doc: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    // Remove from attached documents
     setTask((prev) => ({
       ...prev,
       attachedDocuments: prev.attachedDocuments.filter((d) => d !== doc),
     }));
+
+    // Remove from uploaded files list
+    setUploadedFiles((prev) => prev.filter((fileName) => fileName !== doc));
   };
 
   const handleAddDoc = (doc: string) => {
-    if (task.attachedDocuments.includes(doc)) return;
+    if (task.attachedDocuments.includes(doc)) {
+      // Remove if already attached
+      setTask((prev) => ({
+        ...prev,
+        attachedDocuments: prev.attachedDocuments.filter((d) => d !== doc),
+      }));
+      return;
+    }
+
+    if (task.attachedDocuments.length >= 5) {
+      errorToast("You can attach up to 5 documents only.");
+      return;
+    }
+
     setTask((prev) => ({
       ...prev,
       attachedDocuments: [...prev.attachedDocuments, doc],
@@ -179,23 +252,15 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
 
   useEffect(() => {
     fetchAllUsers();
+    _getDocs();
   }, []);
 
   useEffect(() => {
     if (!visible) {
-      setTask({
-        title: "",
-        description: "",
-        priority: "low",
-        status: "progress",
-        dueDate: new Date(),
-        attachedDocuments: [],
-      });
-      _getDocs();
-      setUsers([]);
-      setNewFiles([]);
+      resetForm();
     }
   }, [visible]);
+
   return (
     <div
       ref={addTaskRef}
@@ -206,15 +271,6 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
           <div onClick={onClose} className={styles.close}>
             <Cross size={24} />
           </div>
-          {/* <div className={styles.sep} />
-          <div className={styles.arrows}>
-            <div className={styles.arrow_up}>
-              <ArrowUp size={24} />
-            </div>
-            <div className={styles.arrow_down}>
-              <ArrowDown size={24} />
-            </div>
-          </div> */}
         </div>
         <div className={styles.save} onClick={handleSubmit}>
           <p>Save</p>
@@ -304,11 +360,11 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
                   }}
                 />
               )}
-              {task.status == "late" ? (
+              {task.status === "late" ? (
                 <div className={styles.late}>
                   <p>late</p>
                 </div>
-              ) : task.status == "done" ? (
+              ) : task.status === "done" ? (
                 <div className={styles.done}>
                   <p>done</p>
                 </div>
@@ -341,15 +397,15 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
                   }}
                 />
               )}
-              {task.priority == "low" ? (
+              {task.priority === "low" ? (
                 <div className={styles.low}>
                   <p>low</p>
                 </div>
-              ) : task.priority == "medium" ? (
+              ) : task.priority === "medium" ? (
                 <div className={styles.medium}>
                   <p>medium</p>
                 </div>
-              ) : task.priority == "high" ? (
+              ) : task.priority === "high" ? (
                 <div className={styles.high}>
                   <p>high</p>
                 </div>
@@ -365,7 +421,6 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
               <Calendar />
               <p>Due date</p>
             </div>
-            {/* { input } */}
             <input
               type="date"
               value={
@@ -377,7 +432,7 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
                 const value = e.target.value;
                 setTask({
                   ...task,
-                  dueDate: value ? new Date(value) : null, // if empty, set null
+                  dueDate: value ? new Date(value) : new Date(),
                 });
               }}
             />
@@ -395,40 +450,31 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
             type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
-            accept="application/pdf" // only PDF
+            accept="application/pdf"
             style={{ display: "none" }}
           />
-          <div onClick={handleDivClick} className={styles.upload_file}>
+          <div
+            onClick={handleDivClick}
+            className={`${styles.upload_file} ${
+              isUploading ? styles.uploading : ""
+            }`}
+          >
             <Upload />
-            <p>Upload file</p>
+            <p>{isUploading ? "Uploading..." : "Upload file"}</p>
           </div>
-          {newFiles
-            ?.map((file) => file.name)
-            ?.map((doc: string, idx: number) => (
-              <div
-                key={idx}
-                className={styles.doc}
-                onClick={() => {
-                  if (!task.attachedDocuments.includes(doc)) {
-                    if (task.attachedDocuments.length >= 3) {
-                      errorToast("You can attach up to 5 documents only.");
-                      return;
-                    }
-                    handleAddDoc(doc);
-                  }
-                }}
-              >
-                <Doc />
-                <p>{doc}</p>
-                {task.attachedDocuments.includes(doc) && (
-                  <Cross2
-                    className={styles.cross}
-                    size={16}
-                    onClick={() => handleRemoveDoc(doc)}
-                  />
-                )}
-              </div>
-            ))}
+          {uploadedFiles.map((fileName: string, idx: number) => (
+            <div
+              key={idx}
+              className={`${styles.doc} ${
+                task.attachedDocuments.includes(fileName) ? styles.attached : ""
+              }`}
+              onClick={(e) => handleRemoveDoc(fileName, e)}
+            >
+              <Doc />
+              <p>{fileName}</p>
+              <Cross2 className={styles.cross} size={16} />
+            </div>
+          ))}
         </div>
       </div>
     </div>
