@@ -1,4 +1,5 @@
 import { axios_instance } from "../lib/axios";
+
 import { useApiAction } from "./useApiAction";
 
 const useDocs = () => {
@@ -11,18 +12,6 @@ const useDocs = () => {
       callback,
     );
 
-  //     let config = {
-  //   method: 'post',
-  //   maxBodyLength: Infinity,
-  //   url: 'http://localhost:3000/upload',
-  //   headers: { 
-  //     ...data.getHeaders()
-  //   },
-  //   data : data
-  // };
-
-  // axios.request(config)
-
   const uploadDoc = (data: FormData, callback: (...args: any) => void) => {
     const requestOptions = {
       method: "POST",
@@ -34,15 +23,6 @@ const useDocs = () => {
       .then((result) => callback(JSON.parse(result), null))
       .catch((error) => callback(null, error));
   }
-  // runApi(
-  //   () => axios_instanceFormData.post("/upload", data, {
-  //     headers: {
-  //       "Content-Type": "multipart/form-data",
-  //     },
-  //   }),
-  //   "Failed to upload document. Please try again.",
-  //   callback,
-  // );
 
   return {
     docsLoading,

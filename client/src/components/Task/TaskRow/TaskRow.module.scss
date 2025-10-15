@@ -4,6 +4,7 @@
   align-items: flex-start;
   gap: 1.5rem;
   align-self: stretch;
+  cursor: pointer;
 
   @media (max-width: 770px) {
     max-width: 1352px;
@@ -69,7 +70,7 @@
           align-items: center;
           gap: 0.625rem;
           border-radius: 12500rem;
-          background: #D7797A;
+          background: #d7797a;
 
           p {
             color: var(--Text-colors-primary-new, #162029);
@@ -121,7 +122,7 @@
     }
 
     .empty * {
-      fill: var(--Bg-colors-grey-accentured, #DFE5F3);
+      fill: var(--Bg-colors-grey-accentured, #dfe5f3);
     }
 
     .late,
@@ -137,7 +138,7 @@
       background: rgba(169, 30, 12, 0.08);
 
       p {
-        color: #A91E0C;
+        color: #a91e0c;
         font-size: 0.875rem;
         font-style: normal;
         font-weight: 500;
@@ -156,7 +157,7 @@
       background: rgba(109, 207, 73, 0.08);
 
       p {
-        color: #2C8C09;
+        color: #2c8c09;
         font-size: 0.875rem;
         font-style: normal;
         font-weight: 500;
@@ -176,7 +177,7 @@
       background: rgba(9, 174, 235, 0.08);
 
       p {
-        color: #09AEEB;
+        color: #09aeeb;
         font-size: 0.875rem;
         font-style: normal;
         font-weight: 500;
@@ -194,7 +195,7 @@
       background: rgba(255, 98, 4, 0.08);
 
       p {
-        color: #FF6204;
+        color: #ff6204;
         font-size: 0.875rem;
         font-style: normal;
         font-weight: 500;

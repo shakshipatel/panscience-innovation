@@ -1,13 +1,11 @@
-
-import { useDispatch, useSelector } from "react-redux"
-import styles from "./Navbar.module.scss"
-import { logoutUser, selectUser } from "../../store/reducers/userSlice"
-import { AddUser, Logout } from "../../icons"
+import { useDispatch, useSelector } from "react-redux";
+import styles from "./Navbar.module.scss";
+import { logoutUser, selectUser } from "../../store/reducers/userSlice";
+import { AddUser, Logout } from "../../icons";
 
 type NavbarProps = {
-  title: string
-}
-
+  title: string;
+};
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {}
 
@@ -32,27 +30,31 @@ export const ArrowIcon: React.FC<IconProps> = (props) => (
 );
 
 const Navbar = ({ title }: NavbarProps) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
 
-  const user = useSelector(selectUser)
-  
   return (
     <div className={styles.navbar}>
       <h1 className={styles.title}>{title}</h1>
       <div className={styles.container}>
-        {user?.role == "admin" && <div className={styles.add_user}>
-          <AddUser />
-          <p>Add users</p>
-        </div>}
+        {user?.role == "admin" && (
+          <div className={styles.add_user}>
+            <AddUser />
+            <p>Add users</p>
+          </div>
+        )}
         <div className={styles.user_info}>
-          <p>{user?.name?.split(" ")?.map((word) => word[0])?.join("")}</p>
-          <div className={styles.logout} onClick={() => dispatch(logoutUser(null))}>
+          <p>{user?.name}</p>
+          <div
+            className={styles.logout}
+            onClick={() => dispatch(logoutUser(null))}
+          >
             <Logout />
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

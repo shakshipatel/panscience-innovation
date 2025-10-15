@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { useUser } from "../../api";
 import { useDispatch } from "react-redux";
+
+import { useUser } from "../../api";
+
 import { setUser } from "../../store/reducers/userSlice";
+
 import styles from "./Login.module.scss";
 
 const Login = () => {
@@ -10,7 +13,9 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
+    {}
+  );
 
   const validate = () => {
     const newErrors: typeof errors = {};
@@ -35,7 +40,6 @@ const Login = () => {
         console.error(err);
         setErrors({ password: "Invalid email or password." });
       } else {
-        console.log(res?.data);
         dispatch(setUser(res?.data));
       }
     });
@@ -45,20 +49,35 @@ const Login = () => {
     <div className={styles.login_page}>
       <img src="/login-page.png" className={styles.img} alt="Logo" />
       <div className={styles.form}>
-        <h1>
-          Login to continue
-        </h1>
+        <h1>Login to continue</h1>
         <div className={styles.inputs}>
-          <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" placeholder="Enter your email..." className={styles.email} />
-          <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Enter your password..." className={styles.email} />
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Enter your email..."
+            className={styles.email}
+          />
+          <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            placeholder="Enter your password..."
+            className={styles.email}
+          />
         </div>
         <div onClick={handleLogin} className={styles.button}>
           <p>Login</p>
         </div>
-        <p className={styles.alter}>Dont have account? <span onClick={() => window.location.href="/register"}>Signup here...</span></p>
+        <p className={styles.alter}>
+          Don't have account?{" "}
+          <span onClick={() => (window.location.href = "/register")}>
+            Signup here...
+          </span>
+        </p>
       </div>
     </div>
-  )
+  );
 };
 
 export default Login;

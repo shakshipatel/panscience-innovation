@@ -39,13 +39,9 @@
 
     .user_info {
       display: flex;
-      height: 2.5rem;
-      padding: 0.5rem;
       justify-content: center;
       align-items: center;
-      gap: 0.25rem;
-      border-radius: 125000000rem;
-      background: #E0FFE9;
+      gap: 0.5rem;
 
       p {
         color: var(--Text-colors-primary-new, #162029);
@@ -56,15 +52,26 @@
         font-style: normal;
         font-weight: 400;
         line-height: normal;
+        height: 2.5rem;
+        padding: 0.5rem;
+        justify-content: center;
+        align-items: center;
+        gap: 0.25rem;
+        border-radius: 125000000rem;
+        background: #e0ffe9;
       }
 
       .logout {
+        height: 2.5rem;
+        width: 2.5rem;
         display: flex;
+        justify-content: center;
         padding: 0.5rem;
         align-items: center;
         gap: 0.625rem;
         border-radius: 1250000000rem;
         cursor: pointer;
+        background-color: rgba(235, 35, 9, 0.08);
       }
     }
   }

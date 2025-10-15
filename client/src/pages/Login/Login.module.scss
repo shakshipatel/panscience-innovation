@@ -26,7 +26,7 @@
       padding: 0.5rem;
       border: 1px solid #ccc;
       border-radius: 0.25rem;
-      font-size: 1rem;        
+      font-size: 1rem;
       min-height: 40px;
     }
 
@@ -114,9 +114,9 @@
         gap: 0.625rem;
         align-self: stretch;
         border-radius: 124999999488rem;
-        border: 1px solid var(--Border-colors-light, #F2F6FC);
+        border: 1px solid var(--Border-colors-light, #f2f6fc);
 
-        color: var(--Text-colors-secondary-new, #646E7D);
+        color: var(--Text-colors-secondary-new, #646e7d);
         font-family: Urbanist;
         font-size: 1rem;
         font-style: normal;
@@ -126,7 +126,7 @@
 
         &:focus {
           border-radius: 124999999488rem;
-          border: 1px solid var(--Orange, #FF6204);
+          border: 1px solid var(--Orange, #ff6204);
         }
       }
     }
@@ -140,11 +140,11 @@
       gap: 0.25rem;
       align-self: stretch;
       border-radius: 125000000rem;
-      background: var(--Orange, #FF6204);
+      background: var(--Orange, #ff6204);
       cursor: pointer;
 
       p {
-        color: var(--Text-colors-primary-inverted, #FFF);
+        color: var(--Text-colors-primary-inverted, #fff);
         font-family: Urbanist;
         font-size: 1rem;
         font-style: normal;
@@ -154,7 +154,7 @@
     }
 
     .alter {
-      color: var(--Text-colors-secondary-new, #646E7D);
+      color: var(--Text-colors-secondary-new, #646e7d);
       text-align: center;
       font-family: Urbanist;
       font-size: 1rem;
@@ -165,7 +165,7 @@
 
       span {
         cursor: pointer;
-        color: var(--Orange, #FF6204);
+        color: var(--Orange, #ff6204);
         font-family: Urbanist;
         font-size: 1rem;
         font-style: normal;

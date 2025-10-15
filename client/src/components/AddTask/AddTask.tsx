@@ -1,38 +1,58 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import {
+  type Task,
+  type TaskPriority,
+  type TaskStatus,
+  type User as TaskUser,
+} from "../../types";
+import { useDocs, useTask, useUser } from "../../api";
+import { errorToast, successToast } from "../../lib/toast";
+import { useOutsideClickHandler } from "../../hooks";
+
+import { PriorityModal, SelectAssignee, SelectStatus } from "../Modals";
+import UserTag from "../UserTag/UserTag";
+
+import { selectAllUsers, setAllUsers } from "../../store/reducers/accountSlice";
+import {
+  selectAllDocs,
+  selectSelectedTask,
+  setAllDocs,
+} from "../../store/reducers/taskSlice";
+import { selectUser } from "../../store/reducers/userSlice";
+
 import {
   // ArrowDown,
   // ArrowUp,
-  Calendar, Cross, Cross2, Doc, Flame, Target, Upload, User
-} from "../../icons"
-import styles from "./AddTask.module.scss"
-import { type CreateTask, type TaskPriority, type TaskStatus } from "../../types"
-import { useDispatch, useSelector } from "react-redux"
-import { selectAllUsers, setAllUsers } from "../../store/reducers/accountSlice"
-import { useDocs, useTask, useUser } from "../../api"
-import { errorToast, successToast } from "../../lib/toast"
-import { useOutsideClickHandler } from "../../hooks"
-import { PriorityModal, SelectAssignee, SelectStatus } from "../Modals"
-import UserTag from "../UserTag/UserTag"
-import { selectAllDocs, setAllDocs } from "../../store/reducers/taskSlice"
-import { selectUser } from "../../store/reducers/userSlice"
+  Calendar,
+  Cross,
+  Cross2,
+  Doc,
+  Flame,
+  Target,
+  Upload,
+  User,
+} from "../../icons";
+import styles from "./AddTask.module.scss";
 
 type Props = {
-  onClose: () => void
-  visible: boolean
-  addTaskRef: React.RefObject<null>
-  onCreate: () => void
-}
+  onClose: () => void;
+  visible: boolean;
+  addTaskRef: React.RefObject<null>;
+  onCreate: () => void;
+};
 
 const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
   const dispatch = useDispatch();
 
-  const APP_USER = useSelector(selectUser)
-  const allUsers = useSelector(selectAllUsers)
+  const APP_USER = useSelector(selectUser);
+  const allUsers = useSelector(selectAllUsers);
   // const allDocs = useSelector(selectAllDocs)
 
-  const { getAllUsers } = useUser()
-  const { createTask } = useTask()
-  const { getDocs, uploadDoc } = useDocs()
+  const { getAllUsers } = useUser();
+  const { createTask } = useTask();
+  const { getDocs, uploadDoc } = useDocs();
 
   const [task, setTask] = useState<CreateTask>({
     title: "",
@@ -41,22 +61,22 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
     status: "progress",
     dueDate: new Date(),
     attachedDocuments: [],
-  })
-  const [users, setUsers] = useState<{ id: string, name: string }[]>([])
-  const [newFiles, setNewFiles] = useState<{ name: string }[]>([])
-  const [userModalOpen, setUserModalOpen] = useState(false)
-  const [statusModalOpen, setStatusModalOpen] = useState(false)
-  const [priorityModalOpen, setPriorityModalOpen] = useState(false)
+  });
+  const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
+  const [newFiles, setNewFiles] = useState<{ name: string }[]>([]);
+  const [userModalOpen, setUserModalOpen] = useState(false);
+  const [statusModalOpen, setStatusModalOpen] = useState(false);
+  const [priorityModalOpen, setPriorityModalOpen] = useState(false);
 
   const userModalRef = useOutsideClickHandler(() => {
-    setUserModalOpen(false)
-  })
+    setUserModalOpen(false);
+  });
   const statusModalRef = useOutsideClickHandler(() => {
-    setStatusModalOpen(false)
-  })
+    setStatusModalOpen(false);
+  });
   const priorityModalRef = useOutsideClickHandler(() => {
-    setPriorityModalOpen(false)
-  })
+    setPriorityModalOpen(false);
+  });
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleDivClick = () => {
@@ -70,87 +90,96 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
       formData.append("pdf", file);
       uploadDoc(formData, (_res, err) => {
         if (err) {
-          errorToast("Failed to upload document. Please try again.")
-          return
+          errorToast("Failed to upload document. Please try again.");
+          return;
         }
-        successToast("Document uploaded successfully.")
-        _getDocs()
-        setNewFiles(prev => [
+        successToast("Document uploaded successfully.");
+        _getDocs();
+        setNewFiles((prev) => [
           ...prev,
           {
-            name: file.name
-          }
-        ])
-      })
+            name: file.name,
+          },
+        ]);
+      });
     }
   };
 
   const handleSubmit = () => {
     if (!APP_USER) {
-      errorToast("User not found. Please login again.")
-      return
+      errorToast("User not found. Please login again.");
+      return;
     }
-    if (APP_USER?.role !== "admin" && !users.find(u => u.id === APP_USER?.id)) {
-      errorToast("You are not assigned to this task. You cannot edit it.")
-      return
+    if (
+      APP_USER?.role !== "admin" &&
+      !users.find((u) => u.id === APP_USER?.id)
+    ) {
+      errorToast("You are not assigned to this task. You cannot edit it.");
+      return;
     }
-    createTask(task, APP_USER?.role === "admin" ? users.map(u => ({ id: u.id })) : [{ id: APP_USER?.id }], (_res, err) => {
-      if (err) {
-        errorToast("Failed to create task. Please try again.")
-        return
+    createTask(
+      task,
+      APP_USER?.role === "admin"
+        ? users.map((u) => ({ id: u.id }))
+        : [{ id: APP_USER?.id }],
+      (_res, err) => {
+        if (err) {
+          errorToast("Failed to create task. Please try again.");
+          return;
+        }
+        successToast("Task created successfully.");
+        setTask({
+          title: "",
+          description: "",
+          priority: "low",
+          status: "progress",
+          dueDate: new Date(),
+          attachedDocuments: [],
+        });
+        setUsers([]);
+        onCreate();
       }
-      successToast("Task created successfully.")
-      setTask({
-        title: "",
-        description: "",
-        priority: "low",
-        status: "progress",
-        dueDate: new Date(),
-        attachedDocuments: [],
-      })
-      setUsers([])
-      onCreate()
-    })
-  }
+    );
+  };
 
   const handleRemoveDoc = (doc: string) => {
-    setTask(prev => ({
+    setTask((prev) => ({
       ...prev,
-      attachedDocuments: prev.attachedDocuments.filter(d => d !== doc)
-    }))
-  }
+      attachedDocuments: prev.attachedDocuments.filter((d) => d !== doc),
+    }));
+  };
 
   const handleAddDoc = (doc: string) => {
-    if (task.attachedDocuments.includes(doc)) return
-    setTask(prev => ({
+    if (task.attachedDocuments.includes(doc)) return;
+    setTask((prev) => ({
       ...prev,
-      attachedDocuments: [...prev.attachedDocuments, doc]
-    }))
-  }
+      attachedDocuments: [...prev.attachedDocuments, doc],
+    }));
+  };
 
   const fetchAllUsers = () => {
     getAllUsers((res, err) => {
       if (err) {
-        errorToast("Failed to fetch users. Please try again.")
-        return
+        errorToast("Failed to fetch users. Please try again.");
+        return;
       }
-      dispatch(setAllUsers(res.data))
-    })
-  }
+      dispatch(setAllUsers(res.data));
+    });
+  };
 
   const _getDocs = () => {
     getDocs((res, err) => {
       if (err) {
-        errorToast("Failed to fetch documents. Please try again.")
-        return
+        errorToast("Failed to fetch documents. Please try again.");
+        return;
       }
-      dispatch(setAllDocs(res?.data))
-    })
-  }
+      dispatch(setAllDocs(res?.data));
+    });
+  };
 
   useEffect(() => {
-    fetchAllUsers()
-  }, [])
+    fetchAllUsers();
+  }, []);
 
   useEffect(() => {
     if (!visible) {
@@ -161,14 +190,17 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
         status: "progress",
         dueDate: new Date(),
         attachedDocuments: [],
-      })
-      _getDocs()
-      setUsers([])
-      setNewFiles([])
+      });
+      _getDocs();
+      setUsers([]);
+      setNewFiles([]);
     }
-  }, [visible])
+  }, [visible]);
   return (
-    <div ref={addTaskRef} className={`${styles.add_task} ${visible ? styles.vis : ""}`}>
+    <div
+      ref={addTaskRef}
+      className={`${styles.add_task} ${visible ? styles.vis : ""}`}
+    >
       <div className={styles.header}>
         <div className={styles.actions}>
           <div onClick={onClose} className={styles.close}>
@@ -189,41 +221,65 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
         </div>
       </div>
       <div className={styles.main_content}>
-        <input type="text" className={styles.title} placeholder="task title..." value={task.title} onChange={(e) => setTask({ ...task, title: e.target.value })} />
+        <input
+          type="text"
+          className={styles.title}
+          placeholder="task title..."
+          value={task.title}
+          onChange={(e) => setTask({ ...task, title: e.target.value })}
+        />
         <div className={styles.form_data}>
           <div className={styles.form_row}>
             <div className={styles.label}>
               <User />
               <p>Assigned to</p>
             </div>
-            <div className={styles.field} onClick={() => setUserModalOpen(true)}>
-              {userModalOpen && <SelectAssignee allUsers={allUsers} onSelect={(id) => {
-                if (APP_USER?.role !== "admin" && id !== APP_USER?.id) {
-                  errorToast("Only admin can assign tasks to other users.")
-                  return
-                }
-                const _user = users.find(u => u.id === id)
-                if (_user) {
-                  setUsers(users.filter(u => u.id !== id))
-                  return
-                }
-                const user = allUsers.find(u => u.id === id)
-                if (!user) return
-                setUsers([...users, user])
-              }} ref={userModalRef} selectedUsers={users} />}
-              {
-                users.length > 0 ? (
-                  users?.map(user => (
-                    <UserTag id={user.id} name={user.name} key={user.id} onRemove={() => setUsers(prev => {
-                      return prev.filter(u => u.id !== user.id)
-                    })} />
-                  ))
-                ) : (
-                  <div onClick={() => setUserModalOpen(true)} className={styles.wrapper}>
-                    <p>assign user...</p>
-                  </div>
-                )
-              }
+            <div
+              className={styles.field}
+              onClick={() => setUserModalOpen(true)}
+            >
+              {userModalOpen && (
+                <SelectAssignee
+                  allUsers={allUsers}
+                  onSelect={(id) => {
+                    if (APP_USER?.role !== "admin" && id !== APP_USER?.id) {
+                      errorToast("Only admin can assign tasks to other users.");
+                      return;
+                    }
+                    const _user = users.find((u) => u.id === id);
+                    if (_user) {
+                      setUsers(users.filter((u) => u.id !== id));
+                      return;
+                    }
+                    const user = allUsers.find((u) => u.id === id);
+                    if (!user) return;
+                    setUsers([...users, user]);
+                  }}
+                  ref={userModalRef}
+                  selectedUsers={users}
+                />
+              )}
+              {users.length > 0 ? (
+                users?.map((user) => (
+                  <UserTag
+                    id={user.id}
+                    name={user.name}
+                    key={user.id}
+                    onRemove={() =>
+                      setUsers((prev) => {
+                        return prev.filter((u) => u.id !== user.id);
+                      })
+                    }
+                  />
+                ))
+              ) : (
+                <div
+                  onClick={() => setUserModalOpen(true)}
+                  className={styles.wrapper}
+                >
+                  <p>assign user...</p>
+                </div>
+              )}
             </div>
           </div>
           <div className={styles.form_row}>
@@ -231,21 +287,36 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
               <Target />
               <p>Status</p>
             </div>
-            <div className={styles.field} onClick={() => setStatusModalOpen(true)}>
-              {statusModalOpen && <SelectStatus
-                ref={statusModalRef}
-                selectedState={task.status}
-                onSelect={(val: TaskStatus) => {
-                  setTask(prev => ({
-                    ...prev,
-                    status: val
-                  }))
-                  setStatusModalOpen(false)
-                }}
-              />}
-              {
-                task.status == "late" ? <div className={styles.late}><p>late</p></div> : task.status == "done" ? <div className={styles.done}><p>done</p></div> : <div className={styles.progress}><p>progress</p></div>
-              }
+            <div
+              className={styles.field}
+              onClick={() => setStatusModalOpen(true)}
+            >
+              {statusModalOpen && (
+                <SelectStatus
+                  ref={statusModalRef}
+                  selectedState={task.status}
+                  onSelect={(val: TaskStatus) => {
+                    setTask((prev) => ({
+                      ...prev,
+                      status: val,
+                    }));
+                    setStatusModalOpen(false);
+                  }}
+                />
+              )}
+              {task.status == "late" ? (
+                <div className={styles.late}>
+                  <p>late</p>
+                </div>
+              ) : task.status == "done" ? (
+                <div className={styles.done}>
+                  <p>done</p>
+                </div>
+              ) : (
+                <div className={styles.progress}>
+                  <p>progress</p>
+                </div>
+              )}
             </div>
           </div>
           <div className={styles.form_row}>
@@ -253,20 +324,40 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
               <Flame />
               <p>Priority</p>
             </div>
-            <div className={styles.field} onClick={() => setPriorityModalOpen(true)}>
-              {priorityModalOpen && <PriorityModal
-                ref={priorityModalRef}
-                selectedState={task.priority}
-                onSelect={(val: TaskPriority) => {
-                  setTask(prev => ({
-                    ...prev,
-                    priority: val
-                  }))
-                  setPriorityModalOpen(false)
-                }}
-              />}
-              {task.priority == "low" ? <div className={styles.low}><p>low</p></div> : task.priority == "medium" ? <div className={styles.medium}><p>medium</p></div> : task.priority == "high" ? <div className={styles.high}><p>high</p></div> : <div className={styles.urgent}><p>urgent</p></div>
-              }
+            <div
+              className={styles.field}
+              onClick={() => setPriorityModalOpen(true)}
+            >
+              {priorityModalOpen && (
+                <PriorityModal
+                  ref={priorityModalRef}
+                  selectedState={task.priority}
+                  onSelect={(val: TaskPriority) => {
+                    setTask((prev) => ({
+                      ...prev,
+                      priority: val,
+                    }));
+                    setPriorityModalOpen(false);
+                  }}
+                />
+              )}
+              {task.priority == "low" ? (
+                <div className={styles.low}>
+                  <p>low</p>
+                </div>
+              ) : task.priority == "medium" ? (
+                <div className={styles.medium}>
+                  <p>medium</p>
+                </div>
+              ) : task.priority == "high" ? (
+                <div className={styles.high}>
+                  <p>high</p>
+                </div>
+              ) : (
+                <div className={styles.urgent}>
+                  <p>urgent</p>
+                </div>
+              )}
             </div>
           </div>
           <div className={styles.form_row}>
@@ -293,7 +384,12 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
           </div>
         </div>
         <div className={styles.divider} />
-        <textarea className={styles.description} placeholder="task description..." value={task.description ?? ""} onChange={(e) => setTask({ ...task, description: e.target.value })} />
+        <textarea
+          className={styles.description}
+          placeholder="task description..."
+          value={task.description ?? ""}
+          onChange={(e) => setTask({ ...task, description: e.target.value })}
+        />
         <div className={styles.upload}>
           <input
             type="file"
@@ -306,27 +402,37 @@ const AddTask = ({ onClose, visible, addTaskRef, onCreate }: Props) => {
             <Upload />
             <p>Upload file</p>
           </div>
-          {
-            newFiles?.map((file) => file.name)?.map((doc: string, idx: number) => (
-              <div key={idx} className={styles.doc} onClick={() => {
-                if (!task.attachedDocuments.includes(doc)) {
-                  if (task.attachedDocuments.length >= 3) {
-                    errorToast("You can attach up to 5 documents only.")
-                    return
+          {newFiles
+            ?.map((file) => file.name)
+            ?.map((doc: string, idx: number) => (
+              <div
+                key={idx}
+                className={styles.doc}
+                onClick={() => {
+                  if (!task.attachedDocuments.includes(doc)) {
+                    if (task.attachedDocuments.length >= 3) {
+                      errorToast("You can attach up to 5 documents only.");
+                      return;
+                    }
+                    handleAddDoc(doc);
                   }
-                  handleAddDoc(doc)
-                }
-              }}>
+                }}
+              >
                 <Doc />
                 <p>{doc}</p>
-                {task.attachedDocuments.includes(doc) && <Cross2 className={styles.cross} size={16} onClick={() => handleRemoveDoc(doc)} />}
+                {task.attachedDocuments.includes(doc) && (
+                  <Cross2
+                    className={styles.cross}
+                    size={16}
+                    onClick={() => handleRemoveDoc(doc)}
+                  />
+                )}
               </div>
-            ))
-          }
+            ))}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AddTask
+export default AddTask;
