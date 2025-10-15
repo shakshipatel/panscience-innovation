@@ -186,6 +186,16 @@ GET    /v1/files            # List all uploaded files
 - `createdAt`: DateTime
 - `updatedAt`: DateTime
 
+#### 🧪 Demo Admin Credentials
+
+To explore the application with admin privileges, use the following test account:
+
+```bash
+Email:    panscience@gmail.com
+Password: admin@panscience
+Role:     admin
+```
+
 ## 🎨 Frontend Structure
 
 ```
