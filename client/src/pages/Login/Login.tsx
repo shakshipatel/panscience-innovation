@@ -9,7 +9,7 @@ import styles from "./Login.module.scss";
 
 const Login = () => {
   const dispatch = useDispatch();
-  const { login } = useUser();
+  const { login, userLoading } = useUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -67,7 +67,7 @@ const Login = () => {
           />
         </div>
         <div onClick={handleLogin} className={styles.button}>
-          <p>Login</p>
+          <p>{userLoading ? "Logging in..." : "Login"}</p>
         </div>
         <p className={styles.alter}>
           Don't have account?{" "}

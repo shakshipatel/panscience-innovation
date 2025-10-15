@@ -4,7 +4,7 @@ import { useState } from "react";
 import { successToast } from "../../lib/toast";
 
 const Register = () => {
-  const { register } = useUser();
+  const { register, userLoading } = useUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -78,7 +78,7 @@ const Register = () => {
           />
         </div>
         <div onClick={handleLogin} className={styles.button}>
-          <p>Register</p>
+          <p>{userLoading ? "Registering..." : "Register"}</p>
         </div>
         <p className={styles.alter}>
           Already have an account?{" "}
