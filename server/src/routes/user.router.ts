@@ -1,4 +1,4 @@
-import express from "express"
+import express from "express";
 import UserRepository from "../repository/user.repository";
 import _prisma from "../db/dbConn";
 import JwtHelper from "../helpers/jwtHelper";
@@ -21,6 +21,15 @@ userRouter.post("/register", userController.registerUser);
 userRouter.post("/login", userController.loginUser);
 userRouter.get("/me", authMiddleware.authenticate, userController.getMe);
 userRouter.get("/all", authMiddleware.authenticate, userController.getAllUsers);
-userRouter.patch("/role/:id", authMiddleware.authenticate, userController.updateUserRole);
+userRouter.patch(
+  "/role/:id",
+  authMiddleware.authenticate,
+  userController.updateUserRole
+);
+userRouter.delete(
+  "/:id",
+  authMiddleware.authenticate,
+  userController.deleteUser
+);
 
-export default userRouter
+export default userRouter;

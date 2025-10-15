@@ -10,7 +10,7 @@ export const useApiAction = () => {
   const runApi = async <T>(
     apiFn: () => Promise<T>,
     fallbackMessage: string,
-    callback?: ApiCallback<T>,
+    callback?: ApiCallback<T>
   ) => {
     setLoading(true);
     try {

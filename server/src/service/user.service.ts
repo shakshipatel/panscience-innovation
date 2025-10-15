@@ -9,7 +9,7 @@ type CreateUserResponse = {
   email: string;
   name: string;
   role: Role;
-}
+};
 
 type LoginResponse = {
   token: string;
@@ -18,25 +18,33 @@ type LoginResponse = {
     email: string;
     name: string;
     role: Role;
-  }
-}
+  };
+};
 
 type UpdateUserResponse = {
   id: string;
   email: string;
   name: string;
   role: Role;
-}
+};
 
 type DeleteUserResponse = {
   success: boolean;
-}
+};
 
 interface IUserService {
-  registerUser(email: string, password: string, name: string): Promise<CreateUserResponse>;
+  registerUser(
+    email: string,
+    password: string,
+    name: string
+  ): Promise<CreateUserResponse>;
   loginUser(email: string, password: string): Promise<LoginResponse>;
   updateUserRole(userId: string, newRole: Role): Promise<UpdateUserResponse>;
-  updateUserProfile(userId: string, name: string, email: string): Promise<UpdateUserResponse>;
+  updateUserProfile(
+    userId: string,
+    name: string,
+    email: string
+  ): Promise<UpdateUserResponse>;
   deleteUser(userId: string): Promise<DeleteUserResponse>;
   getUserByEmail(email: string): Promise<User | null>;
   getMe(userId: string): Promise<User | null>;
@@ -60,7 +68,11 @@ class UserService implements IUserService {
     return this.userRespository.getUserByEmail(email);
   }
 
-  async registerUser(email: string, password: string, name: string): Promise<CreateUserResponse> {
+  async registerUser(
+    email: string,
+    password: string,
+    name: string
+  ): Promise<CreateUserResponse> {
     const existingUser = await this.userRespository.getUserByEmail(email);
     if (existingUser) {
       logger.error(`User with email ${email} already exists`);
@@ -70,7 +82,11 @@ class UserService implements IUserService {
     const hashedPassword = await hashPassword(password);
     logger.info(`Hashed password for ${email}: ${hashedPassword}`);
 
-    const newUser = await this.userRespository.createUser(email, name, hashedPassword);
+    const newUser = await this.userRespository.createUser(
+      email,
+      name,
+      hashedPassword
+    );
     logger.info(`Created new user with ID: ${newUser.id}`);
 
     return {
@@ -94,7 +110,10 @@ class UserService implements IUserService {
       throw new Error("Invalid password");
     }
 
-    const accessToken = this.jwtHelper.generateAccessToken({ id: user.id, email: user.email }, '7d');
+    const accessToken = this.jwtHelper.generateAccessToken(
+      { id: user.id, email: user.email },
+      "7d"
+    );
     if (!accessToken) {
       logger.error(`Failed to generate access token for email ${email}`);
       throw new Error("Failed to generate access token");
@@ -112,8 +131,13 @@ class UserService implements IUserService {
     };
   }
 
-  async updateUserRole(userId: string, newRole: Role): Promise<UpdateUserResponse> {
-    const updatedUser = await this.userRespository.updateUser(userId, { role: newRole });
+  async updateUserRole(
+    userId: string,
+    newRole: Role
+  ): Promise<UpdateUserResponse> {
+    const updatedUser = await this.userRespository.updateUser(userId, {
+      role: newRole,
+    });
     if (!updatedUser) {
       logger.error(`User with ID ${userId} not found`);
       throw new Error("User not found");
@@ -128,14 +152,21 @@ class UserService implements IUserService {
     };
   }
 
-  async updateUserProfile(userId: string, name: string, email: string): Promise<UpdateUserResponse> {
+  async updateUserProfile(
+    userId: string,
+    name: string,
+    email: string
+  ): Promise<UpdateUserResponse> {
     const existingUser = await this.userRespository.getUserByEmail(email);
     if (existingUser && existingUser.id !== userId) {
       logger.error(`User with email ${email} already exists`);
       throw new Error("User with this email already exists");
     }
 
-    const updatedUser = await this.userRespository.updateUser(userId, { name, email });
+    const updatedUser = await this.userRespository.updateUser(userId, {
+      name,
+      email,
+    });
     if (!updatedUser) {
       logger.error(`User with ID ${userId} not found`);
       throw new Error("User not found");
@@ -151,6 +182,7 @@ class UserService implements IUserService {
   }
 
   async deleteUser(userId: string): Promise<DeleteUserResponse> {
+    console.log("Deleting user with ID:", userId);
     const deletedUser = await this.userRespository.deleteUser(userId);
     if (!deletedUser) {
       logger.error(`User with ID ${userId} not found`);

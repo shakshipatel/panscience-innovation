@@ -1,7 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
-import styles from "./Navbar.module.scss";
+import { useState } from "react";
+
 import { logoutUser, selectUser } from "../../store/reducers/userSlice";
-import { AddUser, Logout } from "../../icons";
+
+import { AddUser, Logout, User } from "../../icons";
+import styles from "./Navbar.module.scss";
+import AllUsers from "../Modals/AllUsers/AllUsers";
 
 type NavbarProps = {
   title: string;
@@ -31,29 +35,39 @@ export const ArrowIcon: React.FC<IconProps> = (props) => (
 
 const Navbar = ({ title }: NavbarProps) => {
   const dispatch = useDispatch();
+
   const user = useSelector(selectUser);
 
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleModalOpen = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div className={styles.navbar}>
-      <h1 className={styles.title}>{title}</h1>
-      <div className={styles.container}>
-        {user?.role == "admin" && (
-          <div className={styles.add_user}>
-            <AddUser />
-            <p>Add users</p>
-          </div>
-        )}
-        <div className={styles.user_info}>
-          <p>{user?.name}</p>
-          <div
-            className={styles.logout}
-            onClick={() => dispatch(logoutUser(null))}
-          >
-            <Logout />
+    <>
+      <div className={styles.navbar}>
+        <h1 className={styles.title}>{title}</h1>
+        <div className={styles.container}>
+          {user?.role == "admin" && (
+            <div className={styles.add_user} onClick={handleModalOpen}>
+              <User fill="#162029" />
+              <p>User management</p>
+            </div>
+          )}
+          <div className={styles.user_info}>
+            <p>{user?.name}</p>
+            <div
+              className={styles.logout}
+              onClick={() => dispatch(logoutUser(null))}
+            >
+              <Logout />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      {isOpen && <AllUsers setIsOpen={setIsOpen} />}
+    </>
   );
 };
 

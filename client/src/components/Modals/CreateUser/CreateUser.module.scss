@@ -1,0 +1,63 @@
+.create_user {
+  display: flex;
+  width: 11.3125rem;
+  max-height: 15rem;
+  overflow-y: auto;
+  padding: 0.5rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--Border-colors-light, #f2f6fc);
+  background: var(--Bg-colors-opaque, #fff);
+  box-shadow: 1px 4px 12px 4px rgba(0, 0, 0, 0.04);
+  position: absolute;
+  top: 1.25rem;
+  z-index: 11;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .search {
+    display: flex;
+    padding: 0.25rem;
+    align-items: center;
+    align-content: center;
+    gap: 0.25rem;
+    align-self: stretch;
+    flex-wrap: wrap;
+
+    input {
+      color: var(--Text-colors-secondary-new, #646e7d);
+      font-size: 0.875rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
+
+  .user {
+    display: flex;
+    padding: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: 0.5rem;
+    align-self: stretch;
+    cursor: pointer;
+
+    &.selected {
+      background: var(--Bg-colors-grey-light, #f9fbff);
+    }
+
+    p {
+      color: var(--Text-colors-primary-new, #162029);
+      flex: 1 0 0;
+      font-size: 1rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
+}

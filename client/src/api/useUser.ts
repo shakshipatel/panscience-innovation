@@ -9,28 +9,41 @@ const useUser = () => {
     runApi(
       () => axios_instance.get("/user/me"),
       "Failed to get user. Please try again.",
-      callback,
+      callback
     );
 
-  const register = (data: { email: string, name: string, password: string }, callback: (...args: any) => void) =>
+  const register = (
+    data: { email: string; name: string; password: string },
+    callback: (...args: any) => void
+  ) =>
     runApi(
       () => axios_instance.post("/user/register", data),
       "Failed to register user. Please try again.",
-      callback,
+      callback
     );
 
-  const login = (data: { email: string, password: string }, callback: (...args: any) => void) =>
+  const login = (
+    data: { email: string; password: string },
+    callback: (...args: any) => void
+  ) =>
     runApi(
       () => axios_instance.post("/user/login", data),
       "Failed to login. Please try again.",
-      callback,
+      callback
     );
 
   const getAllUsers = (callback: (...args: any) => void) =>
     runApi(
       () => axios_instance.get("/user/all"),
       "Failed to get users. Please try again.",
-      callback,
+      callback
+    );
+
+  const deleteUser = (id: string, callback: (...args: any) => void) =>
+    runApi(
+      () => axios_instance.delete(`/user/${id}`),
+      "Failed to delete user. Please try again.",
+      callback
     );
 
   return {
@@ -39,6 +52,7 @@ const useUser = () => {
     register,
     getAllUsers,
     login,
+    deleteUser,
   };
 };
 

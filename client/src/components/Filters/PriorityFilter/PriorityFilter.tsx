@@ -1,12 +1,13 @@
-import { Tick } from '../../../icons';
-import type { TaskPriority } from '../../../types';
-import styles from './PriorityFilter.module.scss'
+import type { TaskPriority } from "../../../types";
+
+import { Tick } from "../../../icons";
+import styles from "./PriorityFilter.module.scss";
 
 type Props = {
-  ref: React.RefObject<null>,
+  ref: React.RefObject<null>;
   selected: TaskPriority[];
   onClick: (priority: TaskPriority) => void;
-}
+};
 
 const PriorityFilter = ({ selected, onClick, ref }: Props) => {
   return (
@@ -36,7 +37,7 @@ const PriorityFilter = ({ selected, onClick, ref }: Props) => {
         {selected?.includes("urgent") && <Tick />}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PriorityFilter
+export default PriorityFilter;
