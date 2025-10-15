@@ -36,7 +36,8 @@ interface IUserService {
   registerUser(
     email: string,
     password: string,
-    name: string
+    name: string,
+    role: Role
   ): Promise<CreateUserResponse>;
   loginUser(email: string, password: string): Promise<LoginResponse>;
   updateUserRole(userId: string, newRole: Role): Promise<UpdateUserResponse>;
@@ -71,7 +72,8 @@ class UserService implements IUserService {
   async registerUser(
     email: string,
     password: string,
-    name: string
+    name: string,
+    role: Role
   ): Promise<CreateUserResponse> {
     const existingUser = await this.userRespository.getUserByEmail(email);
     if (existingUser) {
@@ -85,7 +87,8 @@ class UserService implements IUserService {
     const newUser = await this.userRespository.createUser(
       email,
       name,
-      hashedPassword
+      hashedPassword,
+      role
     );
     logger.info(`Created new user with ID: ${newUser.id}`);
 

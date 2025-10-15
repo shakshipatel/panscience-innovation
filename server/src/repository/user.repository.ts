@@ -4,7 +4,12 @@ import type { AppPrismaClient } from "../types";
 
 interface IUserRepository {
   getUserByEmail(email: string): Promise<User | null>;
-  createUser(email: string, name: string, password: string): Promise<User>;
+  createUser(
+    email: string,
+    name: string,
+    password: string,
+    role: Role
+  ): Promise<User>;
   updateUser(
     id: string,
     data: Partial<{ email: string; name: string; password: string; role: Role }>
@@ -31,10 +36,11 @@ class UserRepository implements IUserRepository {
   async createUser(
     email: string,
     name: string,
-    password: string
+    password: string,
+    role: Role
   ): Promise<User> {
     const user = await this.prisma.user.create({
-      data: { email, name, password },
+      data: { email, name, password, role },
     });
     return user;
   }
